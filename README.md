@@ -1,1 +1,1 @@
-# memebet-frontend
+# MemeBet - Frontend
