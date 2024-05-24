@@ -10,7 +10,11 @@ export default [
     ...tseslint.configs.recommended,
     {
         ...pluginReactConfig,
-        rules: { ...pluginReactConfig.rules, 'react/react-in-jsx-scope': 0 }
+        rules: {
+            ...pluginReactConfig.rules,
+            'react/react-in-jsx-scope': 0,
+            '@typescript-eslint/no-explicit-any': 0
+        }
     },
     {
         ignores: ['build/*', 'node_modules/*']
