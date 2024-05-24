@@ -1,30 +1,17 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
-import { json } from '@remix-run/node';
-import { auth } from './cookies';
 import {
     Links,
+    LiveReload,
     Meta,
     Outlet,
     Scripts,
-    useFetcher,
-    useLoaderData
+    ScrollRestoration,
+    isRouteErrorResponse,
+    useRouteError
 } from '@remix-run/react';
+import type { PropsWithChildren } from 'react';
+import { Header } from './components/header';
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    const cookieHeader = request.headers.get('Cookie');
-    const cookie = (await auth.parse(cookieHeader)) || {};
-
-    return json({ privateKey: cookie.privateKey });
-}
-
-export default function App() {
-    const fetcher = useFetcher();
-    let { privateKey } = useLoaderData<typeof loader>();
-
-    if (fetcher.formData?.has('privateKey')) {
-        privateKey = fetcher.formData.get('privateKey');
-    }
-
+export function Layout({ children }: PropsWithChildren) {
     return (
         <html>
             <head>
@@ -33,31 +20,38 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <h1>Hello world! Private key:{privateKey ?? 'not provided'}</h1>
-                <Outlet />
-                <fetcher.Form method="post">
-                    <button
-                        name="privateKey"
-                        value="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-                    >
-                        Login
-                    </button>
-                </fetcher.Form>
+                <Header />
+                {children}
+                <ScrollRestoration />
                 <Scripts />
+                <LiveReload />
             </body>
         </html>
     );
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-    const cookieHeader = request.headers.get('Cookie');
-    const cookie = (await auth.parse(cookieHeader)) || {};
-    const formData = await request.formData();
+export default function App() {
+    return <Outlet />;
+}
 
-    const privateKey = formData.get('privateKey');
-    cookie.privateKey = privateKey;
+export function ErrorBoundary() {
+    const error = useRouteError() as Error;
 
-    return json(privateKey, {
-        headers: { 'Set-Cookie': await auth.serialize(cookie) }
-    });
+    if (isRouteErrorResponse(error)) {
+        return (
+            <>
+                <h1>
+                    {error.status} {error.statusText}
+                </h1>
+                <p>{error.data}</p>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <h1>Error!</h1>
+            <p>{error?.message ?? 'Unknown error'}</p>
+        </>
+    );
 }
