@@ -1,6 +1,5 @@
 import {
     Links,
-    LiveReload,
     Meta,
     Outlet,
     Scripts,
@@ -24,7 +23,6 @@ export function Layout({ children }: PropsWithChildren) {
                 {children}
                 <ScrollRestoration />
                 <Scripts />
-                <LiveReload />
             </body>
         </html>
     );
