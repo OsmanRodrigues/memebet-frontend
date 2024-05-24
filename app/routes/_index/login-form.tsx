@@ -1,13 +1,24 @@
-import { useFetcher } from '@remix-run/react';
+import { useFetcher, useSubmit } from '@remix-run/react';
+import { useWallet } from './use-wallet';
 
 export function LoginForm() {
+    const [wallet, dispatch] = useWallet();
     const fetcher = useFetcher();
+    const submit = useSubmit();
+
+    //TODO try better error feedback
+    if (wallet.error) throw new Error(wallet.error);
 
     return (
-        <fetcher.Form method="post">
+        <fetcher.Form>
             <button
-                name="privateKey"
-                value="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+                onClick={() =>
+                    dispatch.getAccount().then(accounts => {
+                        const formData = new FormData();
+                        formData.append('privateKey', accounts[0]);
+                        submit(formData, { method: 'POST' });
+                    })
+                }
             >
                 Login
             </button>
