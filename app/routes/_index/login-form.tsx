@@ -5,6 +5,8 @@ export function LoginForm() {
     const [wallet, dispatch] = useWallet();
     const fetcher = useFetcher();
     const submit = useSubmit();
+    const isSubmitting = fetcher.state === 'submitting';
+    const isPending = wallet.status === 'pending' || isSubmitting;
 
     //TODO try better error feedback
     if (wallet.error) throw new Error(wallet.error);
@@ -12,6 +14,7 @@ export function LoginForm() {
     return (
         <fetcher.Form>
             <button
+                disabled={isPending || fetcher.state === 'loading'}
                 onClick={() =>
                     dispatch.getAccount().then(accounts => {
                         const formData = new FormData();
@@ -20,7 +23,7 @@ export function LoginForm() {
                     })
                 }
             >
-                Login
+                {isSubmitting ? 'Submitting...' : 'Login'}
             </button>
         </fetcher.Form>
     );
