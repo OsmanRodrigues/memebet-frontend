@@ -1,30 +1,33 @@
-import { useFetcher } from '@remix-run/react';
-import { useWallet } from '~/use-cases/wallet/use-wallet';
+import type { FetcherWithComponents } from '@remix-run/react';
+
+type LoginFormProps = {
+    fetcher: FetcherWithComponents<any>;
+    onSubmit: () => void;
+    error?: any;
+    isPending?: boolean;
+};
 
 export enum LoginFormKey {
     address = 'address'
 }
 
-export function LoginForm() {
-    const [wallet, dispatch] = useWallet();
-    const fetcher = useFetcher();
+export function LoginForm({
+    fetcher,
+    error,
+    isPending,
+    onSubmit
+}: LoginFormProps) {
     const isSubmitting = fetcher.state === 'submitting';
-    const isPending = wallet.status === 'pending' || isSubmitting;
+    const isFormPending = isPending || isSubmitting;
 
     //TODO try better error feedback
-    if (wallet.error) throw new Error(wallet.error);
+    if (error) throw new Error(error);
 
     return (
         <fetcher.Form>
             <button
-                disabled={isPending || fetcher.state === 'loading'}
-                onClick={() => {
-                    dispatch.getAccount().then(accounts => {
-                        const formData = new FormData();
-                        formData.append(LoginFormKey.address, accounts[0]);
-                        fetcher.submit(formData, { method: 'POST' });
-                    });
-                }}
+                disabled={isFormPending || fetcher.state === 'loading'}
+                onClick={onSubmit}
             >
                 {isSubmitting ? 'Submitting...' : 'Login'}
             </button>
