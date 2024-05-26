@@ -1,10 +1,13 @@
-import { useFetcher, useSubmit } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { useWallet } from './use-wallet';
+
+export enum LoginFormKey {
+    address = 'address'
+}
 
 export function LoginForm() {
     const [wallet, dispatch] = useWallet();
     const fetcher = useFetcher();
-    const submit = useSubmit();
     const isSubmitting = fetcher.state === 'submitting';
     const isPending = wallet.status === 'pending' || isSubmitting;
 
@@ -15,13 +18,13 @@ export function LoginForm() {
         <fetcher.Form>
             <button
                 disabled={isPending || fetcher.state === 'loading'}
-                onClick={() =>
+                onClick={() => {
                     dispatch.getAccount().then(accounts => {
                         const formData = new FormData();
-                        formData.append('privateKey', accounts[0]);
-                        submit(formData, { method: 'POST' });
-                    })
-                }
+                        formData.append(LoginFormKey.address, accounts[0]);
+                        fetcher.submit(formData, { method: 'POST' });
+                    });
+                }}
             >
                 {isSubmitting ? 'Submitting...' : 'Login'}
             </button>
