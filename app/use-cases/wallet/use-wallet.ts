@@ -1,39 +1,39 @@
 import { useState } from 'react';
 
 type WalletData = {
-    accounts: string[] | null;
+    address: string | null;
     error: any;
     status: 'idle' | 'pending' | 'success' | 'error';
 };
-type AccountChangeHandler = (accounts: string[]) => Promise<void>;
+type AddressChangeHandler = (address: string) => Promise<void>;
 
 type WalletDispatch = {
     connectWallet: (handler?: {
-        onAccountsChange?: AccountChangeHandler;
-    }) => Promise<string[]>;
+        onAddressChange?: AddressChangeHandler;
+    }) => Promise<string>;
 };
 
 export function useWallet(): [WalletData, WalletDispatch] {
     const [data, setData] = useState<WalletData>({
         status: 'idle',
-        accounts: null,
+        address: null,
         error: null
     });
     const errorFallback = 'Please connect to MetaMask.';
 
-    const setAccountChange = (
+    const setAddressChange = (
         provider?: typeof window.ethereum,
-        handler?: AccountChangeHandler
+        handler?: AddressChangeHandler
     ) => {
         const providerFallback = provider ?? window.ethereum;
 
         const handleAccountsChanged = async (accounts: string[]) => {
-            await handler?.(accounts);
+            await handler?.(accounts[0]);
             setData(prev =>
-                accounts[0] !== prev.accounts?.[0]
+                accounts[0] !== prev.address
                     ? {
                           ...prev,
-                          accounts: accounts,
+                          accounts: accounts[0],
                           status: 'success'
                       }
                     : prev
@@ -70,15 +70,10 @@ export function useWallet(): [WalletData, WalletDispatch] {
             return provider
                 .request({ method: 'eth_requestAccounts' })
                 .then((accounts: string[]) => {
-                    setAccountChange(provider, handler?.onAccountsChange);
+                    setAddressChange(provider, handler?.onAddressChange);
                     // onDisconnect(provider);
-                    setData(prev => ({
-                        ...prev,
-                        accounts: accounts,
-                        status: 'success'
-                    }));
 
-                    return accounts;
+                    return accounts[0];
                 })
                 .catch((err: any) => {
                     const errFallback = err.code === 4001 ? errorFallback : err;
