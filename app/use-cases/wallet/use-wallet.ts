@@ -17,8 +17,9 @@ export function useWallet(): [WalletData, WalletDispatch] {
     const getAccount = () => {
         setData(prev => ({ ...prev, status: 'pending' }));
         const provider = window.ethereum;
+        const errorFallback = 'Please connect to MetaMask.';
 
-        if (provider.isConnected()) {
+        if (provider?.isConnected?.()) {
             return provider
                 .request({ method: 'eth_requestAccounts' })
                 .then((accounts: any) => {
@@ -30,8 +31,7 @@ export function useWallet(): [WalletData, WalletDispatch] {
                     return accounts;
                 })
                 .catch((err: any) => {
-                    const errFallback =
-                        err.code === 4001 ? 'Please connect to MetaMask.' : err;
+                    const errFallback = err.code === 4001 ? errorFallback : err;
                     setData(prev => ({
                         ...prev,
                         error: errFallback,
@@ -39,6 +39,8 @@ export function useWallet(): [WalletData, WalletDispatch] {
                     }));
                     throw errFallback;
                 });
+        } else {
+            throw errorFallback;
         }
     };
 
