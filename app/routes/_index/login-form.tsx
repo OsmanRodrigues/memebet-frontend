@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react';
-import { useWallet } from './use-wallet';
+import { useWallet } from '~/use-cases/wallet/use-wallet';
 
 export enum LoginFormKey {
     address = 'address'
