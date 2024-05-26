@@ -1,49 +1,40 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'; // or cloudflare/deno
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useFetcher, useLoaderData } from '@remix-run/react';
-import { auth } from '../../cookies';
-import { LoginForm } from './login-form';
-import * as userService from '~/services/user-general/service';
+import { LoginForm, LoginFormKey } from './login-form';
+import * as walletUseCase from '~/use-cases/wallet';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const cookieHeader = request.headers.get('Cookie');
-    const cookie = (await auth.parse(cookieHeader)) || {};
-    const balanceRes = cookie.privateKey
-        ? await userService.getBalance(cookie.privateKey)
-        : undefined;
+    const wallet = await walletUseCase.getWallet(request);
 
     return json({
-        privateKey: cookie.privateKey,
-        balance: balanceRes?.balance
+        wallet
     });
 }
 
 export default function Home() {
     const fetcher = useFetcher();
-    let { privateKey, balance } = useLoaderData<typeof loader>();
+    const { wallet } = useLoaderData<typeof loader>();
+    let address = wallet.address;
 
-    if (fetcher.formData?.has('privateKey')) {
-        privateKey = fetcher.formData.get('privateKey');
+    if (fetcher.formData?.has(LoginFormKey.address)) {
+        address = fetcher.formData.get(LoginFormKey.address) as string;
     }
 
     return (
         <>
-            <h1>Hello world! Private key:{privateKey ?? 'not provided'}</h1>
-            <h1>Current balance: {balance ?? 'not informed'}</h1>
+            <h1>Hello world! Private key:{address ?? 'not provided'}</h1>
+            <h1>Current balance: {wallet.ethBalance ?? 'not informed'}</h1>
             <LoginForm />
         </>
     );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-    const cookieHeader = request.headers.get('Cookie');
-    const cookie = (await auth.parse(cookieHeader)) || {};
-    const formData = await request.formData();
+    const { cookie, serializedCookie } =
+        await walletUseCase.handleSubmitWalletAddress(request);
 
-    const privateKey = formData.get('privateKey');
-    cookie.privateKey = privateKey;
-
-    return json(privateKey, {
-        headers: { 'Set-Cookie': await auth.serialize(cookie) }
+    return json(cookie, {
+        headers: { 'Set-Cookie': serializedCookie }
     });
 }
