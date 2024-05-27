@@ -25,19 +25,15 @@ export default function Home() {
     }
 
     const onSubmitLogin = () => {
-        dispatch
-            .connectWallet({
-                onAddressChange: async newAddress => {
-                    const formData = new FormData();
-                    formData.append(LoginFormKey.address, newAddress);
-                    fetcher.submit(formData, { method: 'POST' });
-                }
-            })
-            .then(connectedAddress => {
-                const formData = new FormData();
-                formData.append(LoginFormKey.address, connectedAddress);
-                fetcher.submit(formData, { method: 'POST' });
-            });
+        const submitFormData = (newAddress = '') => {
+            const formData = new FormData();
+            formData.append(LoginFormKey.address, newAddress);
+            fetcher.submit(formData, { method: 'POST' });
+        };
+        dispatch.connectWallet({
+            onAddressChange: async newAddress => submitFormData(newAddress),
+            onDisconnectWallet: async () => submitFormData()
+        });
     };
 
     return (
