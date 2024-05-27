@@ -1,10 +1,12 @@
 import type { FetcherWithComponents } from '@remix-run/react';
+import type { WalletStatus } from '~/use-cases/wallet/use-wallet';
 
 type LoginFormProps = {
     fetcher: FetcherWithComponents<any>;
-    onSubmit: () => void;
+    onLogin: () => void;
+    onLogout: () => void;
     error?: any;
-    isPending?: boolean;
+    walletStatus?: WalletStatus;
 };
 
 export enum LoginFormKey {
@@ -14,11 +16,16 @@ export enum LoginFormKey {
 export function LoginForm({
     fetcher,
     error,
-    isPending,
-    onSubmit
+    walletStatus,
+    onLogin,
+    onLogout
 }: LoginFormProps) {
+    console.log('fetcher.state, walletStatus ->', fetcher.state, walletStatus);
     const isSubmitting = fetcher.state === 'submitting';
-    const isFormPending = isPending || isSubmitting;
+    const isFormDisabled =
+        walletStatus === 'pending' ||
+        isSubmitting ||
+        fetcher.state === 'loading';
 
     //TODO try better error feedback
     if (error) throw new Error(error);
@@ -26,10 +33,14 @@ export function LoginForm({
     return (
         <fetcher.Form>
             <button
-                disabled={isFormPending || fetcher.state === 'loading'}
-                onClick={onSubmit}
+                disabled={isFormDisabled}
+                onClick={walletStatus === 'connected' ? onLogout : onLogin}
             >
-                {isSubmitting ? 'Submitting...' : 'Login'}
+                {isSubmitting
+                    ? 'Submitting...'
+                    : walletStatus === 'connected'
+                      ? 'Logout'
+                      : 'Login'}
             </button>
         </fetcher.Form>
     );

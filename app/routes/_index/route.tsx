@@ -23,17 +23,19 @@ export default function Home() {
     if (fetcher.formData?.has(LoginFormKey.address)) {
         address = fetcher.formData.get(LoginFormKey.address) as string;
     }
-
+    const submitFormData = (newAddress = '') => {
+        const formData = new FormData();
+        formData.append(LoginFormKey.address, newAddress);
+        fetcher.submit(formData, { method: 'POST' });
+    };
     const onSubmitLogin = () => {
-        const submitFormData = (newAddress = '') => {
-            const formData = new FormData();
-            formData.append(LoginFormKey.address, newAddress);
-            fetcher.submit(formData, { method: 'POST' });
-        };
         dispatch.connectWallet({
             onAddressChange: async newAddress => submitFormData(newAddress),
             onDisconnectWallet: async () => submitFormData()
         });
+    };
+    const onSubmitLogout = () => {
+        dispatch.disconnectWallet(undefined, async () => submitFormData());
     };
 
     return (
@@ -44,9 +46,10 @@ export default function Home() {
                 {loaderData.wallet.ethBalance ?? 'not informed'}
             </h1>
             <LoginForm
+                onLogin={onSubmitLogin}
+                onLogout={onSubmitLogout}
                 fetcher={fetcher}
-                onSubmit={onSubmitLogin}
-                isPending={wallet.status === 'pending'}
+                walletStatus={wallet.status}
                 error={wallet.error}
             />
         </>
