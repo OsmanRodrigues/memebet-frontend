@@ -112,9 +112,7 @@ export function useWallet(
             .request({ method: 'eth_accounts' })
             .then(addressChangeListenerRef.current)
             .catch((err: any) => {
-                // Some unexpected error.
-                // For backwards compatibility reasons, if no accounts are available, eth_accounts returns an
-                // empty array.
+                //TODO impl better request account error handling
                 logger.logError(err.message ?? err.toString());
             });
         providerFallback.on(
@@ -125,6 +123,7 @@ export function useWallet(
     const onChainDisconnect = (provider?: typeof window.ethereum) => {
         const providerFallback = provider ?? window.ethereum;
         chainDisconnectListenerRef.current = async (err: any) => {
+            //TODO impl better chain disconnect error handling
             logger.logError(
                 `'chain disconnected ->', ${err.message ?? err.toString()}`
             );
