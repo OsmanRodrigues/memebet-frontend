@@ -20,7 +20,6 @@ export function LoginForm({
     onLogin,
     onLogout
 }: LoginFormProps) {
-    console.log('fetcher.state, walletStatus ->', fetcher.state, walletStatus);
     const isSubmitting = fetcher.state === 'submitting';
     const isFormDisabled =
         walletStatus === 'pending' ||
