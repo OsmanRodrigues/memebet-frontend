@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type WalletStatus =
     | 'disconnected'
@@ -33,7 +33,10 @@ const initialData: WalletData = {
 };
 
 export function useWallet(): [WalletData, WalletDispatch] {
-    const [data, setData] = useState<WalletData>(initialData);
+    const addressChangeListenerRef =
+        useRef<(accounts: string[]) => Promise<void>>();
+    const chainDisconnectListenerRef = useRef<(err: any) => Promise<void>>();
+    const [data, setData] = useState<WalletData>(() => initialData);
     const errorFallback = 'Please connect to MetaMask.';
 
     const setAddressChange = (
@@ -45,7 +48,7 @@ export function useWallet(): [WalletData, WalletDispatch] {
     ) => {
         const providerFallback = provider ?? window.ethereum;
 
-        const handleAccountsChanged = async (accounts: string[]) => {
+        addressChangeListenerRef.current = async (accounts: string[]) => {
             await handler?.onAddressChange?.(accounts[0]);
 
             setData(prev => {
@@ -58,7 +61,7 @@ export function useWallet(): [WalletData, WalletDispatch] {
                 if (accounts[0] !== prev.address)
                     return {
                         ...prev,
-                        accounts: accounts[0],
+                        address: accounts[0],
                         status:
                             prev.status === 'connected'
                                 ? prev.status
@@ -71,20 +74,24 @@ export function useWallet(): [WalletData, WalletDispatch] {
 
         providerFallback
             .request({ method: 'eth_accounts' })
-            .then(handleAccountsChanged)
+            .then(addressChangeListenerRef.current)
             .catch((err: any) => {
                 // Some unexpected error.
                 // For backwards compatibility reasons, if no accounts are available, eth_accounts returns an
                 // empty array.
                 console.error(err);
             });
-        providerFallback.on('accountsChanged', handleAccountsChanged);
+        providerFallback.on(
+            'accountsChanged',
+            addressChangeListenerRef.current
+        );
     };
     const onChainDisconnect = (provider?: typeof window.ethereum) => {
         const providerFallback = provider ?? window.ethereum;
-        providerFallback.on('disconnect', (err: any) => {
+        chainDisconnectListenerRef.current = async (err: any) => {
             console.error('chain disconnected ->', err);
-        });
+        };
+        providerFallback.on('disconnect', chainDisconnectListenerRef.current);
     };
 
     const connectWallet: WalletDispatch['connectWallet'] = handler => {
@@ -135,6 +142,28 @@ export function useWallet(): [WalletData, WalletDispatch] {
                 setData(initialData);
             });
     };
+    console.log('data.address ->', data.address);
+    useEffect(() => {
+        return () => {
+            if (!data.address) {
+                const provider = window.ethereum;
+                if (addressChangeListenerRef.current) {
+                    provider.removeListener(
+                        'accountsChanged',
+                        addressChangeListenerRef.current
+                    );
+                    console.info('addressChangeListener removed ->');
+                }
+                if (chainDisconnectListenerRef.current) {
+                    provider.removeListener(
+                        'disconnect',
+                        chainDisconnectListenerRef.current
+                    );
+                    console.info('chainDisconnectListener removed ->');
+                }
+            }
+        };
+    }, [data.address]);
 
     return [data, { connectWallet, disconnectWallet }];
 }
