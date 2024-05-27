@@ -25,7 +25,7 @@ export const handleSubmitWalletAddress = async (request: Request) => {
     const walletCookie = await getWalletCookie(request);
     const formData = await request.formData();
     const address = formData.get(WalletKey.address) as string;
-    walletCookie.address = address;
+    walletCookie.address = !address ? undefined : address;
     const serializedCookie = await walletCookieStore.serialize(walletCookie);
 
     return {
