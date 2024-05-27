@@ -26,7 +26,7 @@ export function LoginForm({
         isSubmitting ||
         fetcher.state === 'loading';
 
-    //TODO try better error feedback
+    //TODO impl better error feedback
     if (error) throw new Error(error);
 
     return (
