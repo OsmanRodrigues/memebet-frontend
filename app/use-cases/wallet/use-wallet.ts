@@ -1,9 +1,16 @@
 import { useState } from 'react';
 
+export type WalletStatus =
+    | 'disconnected'
+    | 'connected'
+    | 'pending'
+    | 'success'
+    | 'error';
+
 type WalletData = {
     address: string | null;
     error: any;
-    status: 'disconnected' | 'connected' | 'pending' | 'success' | 'error';
+    status: WalletStatus;
 };
 type AddressChangeHandler = (address: string) => Promise<void>;
 type WalletDisconnectHandler = () => Promise<void>;
