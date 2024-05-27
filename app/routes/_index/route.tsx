@@ -16,9 +16,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Home() {
     const fetcher = useFetcher();
     const loaderData = useLoaderData<typeof loader>();
-    const [wallet, dispatch] = useWallet();
-
     let address = loaderData.wallet.address;
+    const [wallet, dispatch] = useWallet(address, {
+        onAddressChange: async newAddress => submitFormData(newAddress),
+        onDisconnectWallet: async () => submitFormData()
+    });
 
     if (fetcher.formData?.has(LoginFormKey.address)) {
         address = fetcher.formData.get(LoginFormKey.address) as string;
@@ -29,10 +31,7 @@ export default function Home() {
         fetcher.submit(formData, { method: 'POST' });
     };
     const onSubmitLogin = () => {
-        dispatch.connectWallet({
-            onAddressChange: async newAddress => submitFormData(newAddress),
-            onDisconnectWallet: async () => submitFormData()
-        });
+        dispatch.connectWallet();
     };
     const onSubmitLogout = () => {
         dispatch.disconnectWallet(undefined, async () => submitFormData());
