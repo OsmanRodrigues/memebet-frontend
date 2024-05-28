@@ -1,3 +1,5 @@
+import type { LinksFunction } from '@remix-run/node';
+import type { PropsWithChildren } from 'react';
 import {
     Links,
     Meta,
@@ -7,22 +9,41 @@ import {
     isRouteErrorResponse,
     useRouteError
 } from '@remix-run/react';
-import type { PropsWithChildren } from 'react';
+import stylesheet from '~/tailwind.css?url';
+import { NextUIProvider } from '@nextui-org/react';
 import { Header } from './components/header';
+
+export const links: LinksFunction = () => [
+    { rel: 'stylesheet', href: stylesheet }
+];
 
 export function Layout({ children }: PropsWithChildren) {
     return (
         <html>
             <head>
                 <link rel="icon" href="data:image/x-icon;base64,AA" />
+
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+                    rel="stylesheet"
+                />
+
                 <Meta />
                 <Links />
             </head>
-            <body>
-                <Header />
-                {children}
-                <ScrollRestoration />
-                <Scripts />
+            <body className="dark text-foreground bg-background">
+                <NextUIProvider>
+                    <Header />
+                    {children}
+                    <ScrollRestoration />
+                    <Scripts />
+                </NextUIProvider>
             </body>
         </html>
     );
