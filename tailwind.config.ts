@@ -11,7 +11,11 @@ export default {
             display: ['Plus Jakarta Sans'],
             body: ['Inter']
         },
-        extend: {}
+        extend: {
+            screens: {
+                mobile: { raw: '(min-width:810px)' }
+            }
+        }
     },
     darkMode: 'class',
     plugins: [nextui()]
