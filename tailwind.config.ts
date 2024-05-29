@@ -13,7 +13,7 @@ export default {
         },
         extend: {
             screens: {
-                mobile: { raw: '(min-width:810px)' }
+                mobile: { raw: '(max-width:810px)' }
             }
         }
     },
