@@ -1,59 +1,18 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { useFetcher, useLoaderData } from '@remix-run/react';
-import { LoginForm, LoginFormKey } from './login-form';
-import * as walletUseCase from '~/use-cases/wallet';
-import { useWallet } from '~/use-cases/wallet/use-wallet';
-
-export async function loader({ request }: LoaderFunctionArgs) {
-    const wallet = await walletUseCase.getWallet(request);
-
-    return json({
-        wallet
-    });
-}
+import { useFetcher } from '@remix-run/react';
+import type { WalletData } from '~/use-cases/wallet';
 
 export default function Home() {
-    const fetcher = useFetcher();
-    const loaderData = useLoaderData<typeof loader>();
-    let address = loaderData.wallet.address;
-    const [wallet, dispatch] = useWallet(address, {
-        onAddressChange: async newAddress => submitFormData(newAddress),
-        onDisconnectWallet: async () => submitFormData()
-    });
-
-    if (fetcher.formData?.has(LoginFormKey.address)) {
-        address = fetcher.formData.get(LoginFormKey.address) as string;
-    }
-    const submitFormData = (newAddress = '') => {
-        const formData = new FormData();
-        formData.append(LoginFormKey.address, newAddress);
-        fetcher.submit(formData, {
-            method: 'POST',
-            action: '/resource/auth'
-        });
-    };
-    const onSubmitLogin = () => {
-        dispatch.connectWallet();
-    };
-    const onSubmitLogout = () => {
-        dispatch.disconnectWallet(undefined, async () => submitFormData());
-    };
+    const fetcher = useFetcher<WalletData>({ key: 'auth-fetcher' });
 
     return (
         <>
-            <h1>Hello world! Private key:{address ?? 'not provided'}</h1>
             <h1>
-                Current balance:{' '}
-                {loaderData.wallet.ethBalance ?? 'not informed'}
+                Hello world! Private key:
+                {fetcher.data?.address ?? 'not provided'}
             </h1>
-            <LoginForm
-                onLogin={onSubmitLogin}
-                onLogout={onSubmitLogout}
-                fetcher={fetcher}
-                walletStatus={wallet.status}
-                error={wallet.error}
-            />
+            <h1>
+                Current balance: {fetcher.data?.ethBalance ?? 'not informed'}
+            </h1>
         </>
     );
 }
