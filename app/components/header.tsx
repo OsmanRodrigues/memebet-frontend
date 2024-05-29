@@ -27,20 +27,21 @@ export function Header() {
     );
 }
 
+const Brand = () => (
+    <NavbarBrand>
+        <p className="font-bold text-inherit">Memebet 🤑</p>
+    </NavbarBrand>
+);
 const DefaultContent = () => (
     <>
         <NavbarContent className="mobile:hidden pr-3" justify="center">
-            <NavbarBrand>
-                <p className="font-bold text-inherit">Memebet 🤑</p>
-            </NavbarBrand>
+            <Brand />
         </NavbarContent>
     </>
 );
 const MobileContent = () => (
     <NavbarContent className="hidden mobile:flex gap-4" justify="center">
-        <NavbarBrand>
-            <p className="font-bold text-inherit">Memebet 🤑</p>
-        </NavbarBrand>
+        <Brand />
         <NavbarItem>
             <Link to={routes.home.route} color="foreground">
                 {routes.home.name}
