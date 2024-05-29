@@ -1,10 +1,12 @@
 import * as walletService from '~/services/wallet/service';
+import * as governanceService from '~/services/governance/service';
 import { WalletKey } from './constants';
 import { getWalletCookie, walletCookieStore } from './cookies';
 
 export type WalletData = {
     address?: string;
     ethBalance?: string;
+    isDAOMember?: boolean;
 };
 
 export const getWallet = async (
@@ -17,8 +19,14 @@ export const getWallet = async (
 
     if (addressFallback) {
         const { balance } = await walletService.getEthBalance(addressFallback);
+        const DAOMemberList = await governanceService.getDAOMembersList();
+        const isDAOMember =
+            !!DAOMemberList.length &&
+            DAOMemberList.some(
+                memberAddress => memberAddress === addressFallback
+            );
 
-        return { address, ethBalance: balance };
+        return { address, isDAOMember, ethBalance: balance };
     }
 
     return {
