@@ -15,6 +15,7 @@ import {
 import { useWallet } from '~/use-cases/wallet/use-wallet';
 import type { WalletData } from '~/use-cases/wallet';
 
+export const AuthFetcherKey = 'auth-fetcher';
 export enum AuthFormKey {
     address = 'address'
 }
@@ -111,7 +112,7 @@ const DefaultContent = () => {
 };
 const Auth = () => {
     const fetcher = useFetcher<Partial<WalletData>>({
-        key: 'auth-fetcher'
+        key: AuthFetcherKey
     });
     const [wallet, dispatch] = useWallet(fetcher.data?.address, {
         onAddressChange: async newAddress => submitFormData({ newAddress }),
