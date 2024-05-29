@@ -1,4 +1,4 @@
-const inspectBaseUrl = 'http://localhost:8080/inspect';
+import { inspectBaseUrl } from '../shared-constants';
 
 export const endpoint = {
     getBalance: {
