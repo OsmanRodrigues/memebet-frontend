@@ -114,8 +114,8 @@ const Auth = () => {
         key: 'auth-fetcher'
     });
     const [wallet, dispatch] = useWallet(fetcher.data?.address, {
-        onAddressChange: async newAddress => submitFormData(newAddress),
-        onDisconnectWallet: async () => submitFormData()
+        onAddressChange: async newAddress => submitFormData({ newAddress }),
+        onDisconnectWallet: async () => submitFormData({ action: 'logout' })
     });
     const isSubmitting = fetcher.state === 'submitting';
     const isFormDisabled =
@@ -123,9 +123,20 @@ const Auth = () => {
         isSubmitting ||
         fetcher.state === 'loading';
 
-    const submitFormData = (newAddress = '') => {
+    const submitFormData = (args: {
+        newAddress?: string;
+        action?: 'logout';
+    }) => {
         const formData = new FormData();
-        formData.append(AuthFormKey.address, newAddress);
+
+        if (args.action === 'logout') {
+            formData.append(args.action, args.action);
+        } else if (args.newAddress) {
+            formData.append(AuthFormKey.address, args.newAddress);
+        } else {
+            return;
+        }
+
         fetcher.submit(formData, {
             method: 'POST',
             action: '/resource/auth'
@@ -135,7 +146,9 @@ const Auth = () => {
         dispatch.connectWallet();
     };
     const onSubmitLogout = () => {
-        dispatch.disconnectWallet(undefined, async () => submitFormData());
+        dispatch.disconnectWallet(undefined, async () =>
+            submitFormData({ action: 'logout' })
+        );
     };
 
     return (
