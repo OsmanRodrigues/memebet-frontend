@@ -79,18 +79,21 @@ const Brand = () => (
         </p>
     </NavbarBrand>
 );
-const DefaultContent = () => (
+const MobileContent = () => (
     <>
-        <NavbarContent className="mobile:hidden pr-3" justify="center">
+        <NavbarContent
+            className="hidden mobile:flex mobile:pr-3"
+            justify="center"
+        >
             <Brand />
         </NavbarContent>
     </>
 );
-const MobileContent = () => {
+const DefaultContent = () => {
     const location = useLocation();
 
     return (
-        <NavbarContent className="hidden mobile:flex gap-4" justify="center">
+        <NavbarContent className="flex gap-4 mobile:hidden" justify="center">
             <Brand />
             <NavBarItemWithLocationFeeback
                 locationPathname={location.pathname}
@@ -177,7 +180,7 @@ const Menu = () => {
     );
 };
 const MenuToggler = () => (
-    <NavbarContent className="mobile:hidden" justify="start">
+    <NavbarContent className="hidden mobile:flex" justify="start">
         <NavbarMenuToggle />
     </NavbarContent>
 );
