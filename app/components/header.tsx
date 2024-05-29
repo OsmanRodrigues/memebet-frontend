@@ -8,7 +8,7 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle
 } from '@nextui-org/react';
-import { Link } from '@remix-run/react';
+import { Link, useLocation } from '@remix-run/react';
 
 const routes = {
     home: { name: 'Home', route: '/' },
@@ -26,7 +26,46 @@ export function Header() {
         </Navbar>
     );
 }
+const NavBarItemWithLocationFeeback = ({
+    locationPathname,
+    routeProps,
+    index,
+    menuItemsCount,
+    isMobile
+}: {
+    locationPathname: string;
+    routeProps: { name: string; route: string };
+    index?: number;
+    menuItemsCount?: number;
+    isMobile?: boolean;
+}) => {
+    const Component = isMobile ? NavbarMenuItem : NavbarItem;
+    const isCurrentLocation = locationPathname === routeProps.route;
 
+    return (
+        <Component isActive={isCurrentLocation}>
+            <Link
+                to={routeProps.route}
+                aria-current={isCurrentLocation ? 'page' : undefined}
+                {...{
+                    className: 'w-full',
+                    color:
+                        isMobile && menuItemsCount
+                            ? index === 2
+                                ? 'warning'
+                                : index === menuItemsCount - 1
+                                  ? 'danger'
+                                  : 'foreground'
+                            : isCurrentLocation
+                              ? 'warning'
+                              : 'foreground'
+                }}
+            >
+                {routeProps.name}
+            </Link>
+        </Component>
+    );
+};
 const Brand = () => (
     <NavbarBrand>
         <p className="font-bold text-inherit">Memebet 🤑</p>
@@ -39,21 +78,23 @@ const DefaultContent = () => (
         </NavbarContent>
     </>
 );
-const MobileContent = () => (
-    <NavbarContent className="hidden mobile:flex gap-4" justify="center">
-        <Brand />
-        <NavbarItem>
-            <Link to={routes.home.route} color="foreground">
-                {routes.home.name}
-            </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-            <Link to={routes.games.route} aria-current="page" color="warning">
-                {routes.games.name}
-            </Link>
-        </NavbarItem>
-    </NavbarContent>
-);
+const MobileContent = () => {
+    const location = useLocation();
+
+    return (
+        <NavbarContent className="hidden mobile:flex gap-4" justify="center">
+            <Brand />
+            <NavBarItemWithLocationFeeback
+                locationPathname={location.pathname}
+                routeProps={routes.home}
+            />
+            <NavBarItemWithLocationFeeback
+                locationPathname={location.pathname}
+                routeProps={routes.games}
+            />
+        </NavbarContent>
+    );
+};
 const Auth = () => (
     <NavbarContent justify="end">
         <NavbarItem>
@@ -64,26 +105,20 @@ const Auth = () => (
     </NavbarContent>
 );
 const Menu = () => {
+    const location = useLocation();
     const menuItems = Object.values(routes);
 
     return (
         <NavbarMenu>
             {menuItems.map((item, index) => (
-                <NavbarMenuItem key={`${item}-${index}`}>
-                    <Link
-                        className="w-full"
-                        color={
-                            index === 2
-                                ? 'warning'
-                                : index === menuItems.length - 1
-                                  ? 'danger'
-                                  : 'foreground'
-                        }
-                        to={item.route}
-                    >
-                        {item.name}
-                    </Link>
-                </NavbarMenuItem>
+                <NavBarItemWithLocationFeeback
+                    key={`${item}-${index}`}
+                    locationPathname={location.pathname}
+                    routeProps={item}
+                    menuItemsCount={menuItems.length}
+                    index={index}
+                    isMobile
+                />
             ))}
         </NavbarMenu>
     );
