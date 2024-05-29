@@ -7,11 +7,16 @@ export type WalletData = {
     ethBalance?: string;
 };
 
-export const getWallet = async (request: Request): Promise<WalletData> => {
-    const { address } = await getWalletCookie(request);
+export const getWallet = async (
+    request?: Request,
+    address?: string
+): Promise<WalletData> => {
+    const addressFallback =
+        address ??
+        (request ? (await getWalletCookie(request!))?.address : undefined);
 
-    if (address) {
-        const { balance } = await walletService.getEthBalance(address);
+    if (addressFallback) {
+        const { balance } = await walletService.getEthBalance(addressFallback);
 
         return { address, ethBalance: balance };
     }
