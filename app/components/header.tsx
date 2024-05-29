@@ -1,5 +1,9 @@
+import { Link, useFetcher, useLocation } from '@remix-run/react';
+import ethIcon from '~/assets/images/eth-icon.svg';
 import {
+    Avatar,
     Button,
+    Chip,
     Navbar,
     NavbarBrand,
     NavbarContent,
@@ -8,7 +12,6 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle
 } from '@nextui-org/react';
-import { Link, useFetcher, useLocation } from '@remix-run/react';
 import { useWallet } from '~/use-cases/wallet/use-wallet';
 import type { WalletData } from '~/use-cases/wallet';
 
@@ -23,7 +26,7 @@ const routes = {
 
 export function Header() {
     return (
-        <Navbar disableAnimation isBordered>
+        <Navbar isBordered>
             <MenuToggler />
             <DefaultContent />
             <MobileContent />
@@ -137,6 +140,17 @@ const Auth = () => {
 
     return (
         <NavbarContent justify="end">
+            {fetcher.data?.ethBalance && (
+                <NavbarItem>
+                    <Chip
+                        color="warning"
+                        variant="shadow"
+                        avatar={<Avatar name="$" src={ethIcon} />}
+                    >
+                        {fetcher.data?.ethBalance}
+                    </Chip>
+                </NavbarItem>
+            )}
             <NavbarItem>
                 <fetcher.Form>
                     <Button
