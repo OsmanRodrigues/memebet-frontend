@@ -21,8 +21,8 @@ export function Layout({ children }: PropsWithChildren) {
     return (
         <html>
             <head>
+                <meta charSet="utf-8" />
                 <link rel="icon" href="data:image/x-icon;base64,AA" />
-
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link
                     rel="preconnect"
@@ -33,7 +33,6 @@ export function Layout({ children }: PropsWithChildren) {
                     href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap"
                     rel="stylesheet"
                 />
-
                 <Meta />
                 <Links />
             </head>
