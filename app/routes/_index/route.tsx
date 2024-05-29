@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useFetcher, useLoaderData } from '@remix-run/react';
 import { LoginForm, LoginFormKey } from './login-form';
@@ -28,7 +28,10 @@ export default function Home() {
     const submitFormData = (newAddress = '') => {
         const formData = new FormData();
         formData.append(LoginFormKey.address, newAddress);
-        fetcher.submit(formData, { method: 'POST' });
+        fetcher.submit(formData, {
+            method: 'POST',
+            action: '/resource/auth'
+        });
     };
     const onSubmitLogin = () => {
         dispatch.connectWallet();
@@ -53,13 +56,4 @@ export default function Home() {
             />
         </>
     );
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-    const { cookie, serializedCookie } =
-        await walletUseCase.handleSubmitWalletAddress(request);
-
-    return json(cookie, {
-        headers: { 'Set-Cookie': serializedCookie }
-    });
 }
