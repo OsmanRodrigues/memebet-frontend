@@ -74,7 +74,9 @@ const NavBarItemWithLocationFeeback = ({
 };
 const Brand = () => (
     <NavbarBrand>
-        <p className="font-bold text-inherit">Memebet</p>
+        <p className="font-bold text-inherit">
+            Memebet <span>🤑</span>
+        </p>
     </NavbarBrand>
 );
 const DefaultContent = () => (
