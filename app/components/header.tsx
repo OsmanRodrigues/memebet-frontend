@@ -8,7 +8,13 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle
 } from '@nextui-org/react';
-import { Link, useLocation } from '@remix-run/react';
+import { Link, useFetcher, useLocation } from '@remix-run/react';
+import { useWallet } from '~/use-cases/wallet/use-wallet';
+import type { WalletData } from '~/use-cases/wallet';
+
+export enum AuthFormKey {
+    address = 'address'
+}
 
 const routes = {
     home: { name: 'Home', route: '/' },
@@ -68,7 +74,7 @@ const NavBarItemWithLocationFeeback = ({
 };
 const Brand = () => (
     <NavbarBrand>
-        <p className="font-bold text-inherit">Memebet 🤑</p>
+        <p className="font-bold text-inherit">Memebet</p>
     </NavbarBrand>
 );
 const DefaultContent = () => (
@@ -95,15 +101,60 @@ const MobileContent = () => {
         </NavbarContent>
     );
 };
-const Auth = () => (
-    <NavbarContent justify="end">
-        <NavbarItem>
-            <Button color="warning" variant="flat">
-                Login
-            </Button>
-        </NavbarItem>
-    </NavbarContent>
-);
+const Auth = () => {
+    const fetcher = useFetcher<Partial<WalletData>>({
+        key: 'auth-fetcher'
+    });
+    const [wallet, dispatch] = useWallet(fetcher.data?.address, {
+        onAddressChange: async newAddress => submitFormData(newAddress),
+        onDisconnectWallet: async () => submitFormData()
+    });
+    const isSubmitting = fetcher.state === 'submitting';
+    const isFormDisabled =
+        wallet.status === 'pending' ||
+        isSubmitting ||
+        fetcher.state === 'loading';
+
+    const submitFormData = (newAddress = '') => {
+        const formData = new FormData();
+        formData.append(AuthFormKey.address, newAddress);
+        fetcher.submit(formData, {
+            method: 'POST',
+            action: '/resource/auth'
+        });
+    };
+    const onSubmitLogin = () => {
+        dispatch.connectWallet();
+    };
+    const onSubmitLogout = () => {
+        dispatch.disconnectWallet(undefined, async () => submitFormData());
+    };
+
+    return (
+        <NavbarContent justify="end">
+            <NavbarItem>
+                <fetcher.Form>
+                    <Button
+                        isDisabled={isFormDisabled}
+                        color={isFormDisabled ? 'danger' : 'default'}
+                        variant="flat"
+                        onClick={
+                            wallet.status === 'connected'
+                                ? onSubmitLogout
+                                : onSubmitLogin
+                        }
+                    >
+                        {isSubmitting
+                            ? 'Submitting...'
+                            : wallet.status === 'connected'
+                              ? 'Logout'
+                              : 'Login'}
+                    </Button>
+                </fetcher.Form>
+            </NavbarItem>
+        </NavbarContent>
+    );
+};
 const Menu = () => {
     const location = useLocation();
     const menuItems = Object.values(routes);
