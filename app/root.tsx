@@ -12,6 +12,7 @@ import {
 import stylesheet from '~/tailwind.css?url';
 import { NextUIProvider } from '@nextui-org/react';
 import { Header } from './components/header';
+import { Main } from './components/main';
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
@@ -39,7 +40,7 @@ export function Layout({ children }: PropsWithChildren) {
             <body className="dark text-foreground bg-background">
                 <NextUIProvider>
                     <Header />
-                    {children}
+                    <Main>{children}</Main>
                     <ScrollRestoration />
                     <Scripts />
                 </NextUIProvider>
