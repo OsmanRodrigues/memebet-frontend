@@ -18,15 +18,20 @@ export const getWallet = async (
         (request ? (await getWalletCookie(request!))?.address : undefined);
 
     if (addressFallback) {
-        const { balance } = await walletService.getEthBalance(addressFallback);
-        const DAOMemberList = await governanceService.getDAOMembersList();
+        const getBalanceRes =
+            await walletService.getEthBalance(addressFallback);
+        const getMembersRes = await governanceService.getDAOMembersList();
         const isDAOMember =
-            !!DAOMemberList.length &&
-            DAOMemberList.some(
+            !!getMembersRes.data?.length &&
+            getMembersRes.data.some(
                 memberAddress => memberAddress === addressFallback
             );
 
-        return { address, isDAOMember, ethBalance: balance };
+        return {
+            address,
+            isDAOMember,
+            ethBalance: getBalanceRes.data?.balance
+        };
     }
 
     return {
