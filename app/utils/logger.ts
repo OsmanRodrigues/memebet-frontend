@@ -6,4 +6,4 @@ export const logError = (msg: string) =>
 export const logInfo = (msg: string) =>
     console.info('%c'.concat(msg), baseCSS.replace('$color', '#4d76ee'));
 export const logSuccess = (msg: string) =>
-    console.log('%c'.concat(msg), baseCSS.replace('$color', '##43c358'));
+    console.log('%c'.concat(msg), baseCSS.replace('$color', '#43c358'));
