@@ -1,12 +1,19 @@
 import { type Address, Tikua } from '@doiim/tikua';
 import { transformHexToUTF8 } from './transformer';
+import { advanceABIMap, dappAddress } from '~/services/shared-constants';
+import { logError, logSuccess } from './logger';
 
 export type RequestBuilderInitArgs = {
     abi: string[] | null;
     appAddress: Address | null;
     appEndpoint: string | null;
-    provider: any | null;
-    signerAddress: Address | null;
+    provider: typeof window.ethereum | null;
+    signerAddress: string | null;
+};
+export type RequestBuilderResponse<Data = any, Error = any> = {
+    ok: boolean;
+    error?: Error;
+    data?: Data;
 };
 
 class RequestBuilderSingleton {
@@ -34,41 +41,65 @@ class RequestBuilderSingleton {
         return this;
     }
 
-    async inspect<Result = any>(url?: string): Promise<Result> {
-        const urlFallback = url ?? this._url;
+    async inspect<Result = any>(
+        url?: string
+    ): Promise<RequestBuilderResponse<Result>> {
+        try {
+            const urlFallback = url ?? this._url;
 
-        if (!urlFallback) throw new Error('An url must be provided.');
+            if (!urlFallback) throw new Error('An url must be provided.');
 
-        const res = await fetch(urlFallback, { method: 'GET' });
-        const resJSON = await res.json();
-        const hexPayload = resJSON?.reports[0]?.payload;
-        const payload = hexPayload
-            ? JSON.parse(transformHexToUTF8(hexPayload))
-            : {};
+            const res = await fetch(urlFallback, { method: 'GET' });
+            const resJSON = await res.json();
+            const hexPayload = resJSON?.reports[0]?.payload;
+            const payload = hexPayload
+                ? JSON.parse(transformHexToUTF8(hexPayload))
+                : {};
 
-        return payload;
+            return { ok: true, data: payload };
+        } catch (err: any) {
+            throw { ok: false, error: err.message ?? err };
+        }
     }
-    send(actionName: string, args?: string[]) {
-        if (
-            this.abi?.length &&
-            this.appAddress &&
-            this.provider &&
-            this.signerAddress
-        ) {
-            this.requester = new Tikua({
-                abi: this.abi,
-                appAddress: this.appAddress,
-                provider: this.provider,
-                signerAddress: this.signerAddress
-            });
+    async send<Result = any>(
+        actionName: string,
+        args?: (string | number)[]
+    ): Promise<RequestBuilderResponse<Result>> {
+        try {
+            if (
+                this.abi?.length &&
+                this.appAddress &&
+                this.provider &&
+                this.signerAddress
+            ) {
+                this.requester = new Tikua({
+                    abi: this.abi,
+                    appAddress: this.appAddress,
+                    provider: this.provider,
+                    signerAddress: this.signerAddress as Address
+                });
+                await this.requester.sendInput(actionName, args ?? []);
 
-            return this.requester.sendInput(actionName, args ?? []);
-        } else {
-            throw new Error(
-                'At least one dapp address, one provider, one signer address and one abi must be provided.'
-            );
+                logSuccess('Input sent successfully!->');
+
+                return { ok: true };
+            } else {
+                throw new Error(
+                    'At least one dapp address, one provider, one signer address and one abi must be provided.'
+                );
+            }
+        } catch (err: any) {
+            logError(`Error on sent input-> ${err.message ?? String(err)}`);
+
+            throw { ok: false, error: err.message ?? err };
         }
     }
 }
 
-export const requestBuilder = new RequestBuilderSingleton();
+const requestBuilder = new RequestBuilderSingleton();
+requestBuilder.config({
+    appAddress: dappAddress,
+    abi: advanceABIMap
+});
+
+export { requestBuilder };
