@@ -108,12 +108,13 @@ const CTAButton = (props: { text: string; onClick: () => void }) => (
 const ModalDefault = (
     props: Pick<
         ModalProps,
-        'isOpen' | 'onOpenChange' | 'children' | 'title' | 'key'
-    >
+        'isOpen' | 'onOpenChange' | 'children' | 'title'
+    > & { fetcherKey: string }
 ) => {
     const fetcher = useFetcher({
-        key: props.key ? props.key.toString() : undefined
+        key: props.fetcherKey
     });
+    const isPending = fetcher.state !== 'idle';
 
     return (
         <Modal
@@ -121,6 +122,7 @@ const ModalDefault = (
             onOpenChange={props.onOpenChange}
             placement="top-center"
             backdrop="blur"
+            isDismissable={isPending}
         >
             <ModalContent>
                 {onClose => (
@@ -135,11 +137,19 @@ const ModalDefault = (
                                     color="default"
                                     variant="flat"
                                     onPress={onClose}
+                                    isDisabled={isPending}
                                 >
                                     Cancel
                                 </Button>
-                                <Button color="secondary" type="submit">
-                                    Create
+                                <Button
+                                    color={isPending ? 'danger' : 'secondary'}
+                                    type="submit"
+                                    isDisabled={isPending}
+                                    isLoading={isPending}
+                                >
+                                    {fetcher.state === 'submitting'
+                                        ? 'Creating...'
+                                        : 'Create'}
                                 </Button>
                             </ModalFooter>
                         </fetcher.Form>
@@ -155,7 +165,7 @@ const CreateFunctionModal = (
     return (
         <ModalDefault
             title="Create function"
-            key={CreateFunctionFetcherKey}
+            fetcherKey={CreateFunctionFetcherKey}
             {...props}
         >
             <Input
@@ -188,7 +198,11 @@ const CreateGameModal = (
     props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
 ) => {
     return (
-        <ModalDefault title="Create game" key={CreateGameFetcherKey} {...props}>
+        <ModalDefault
+            title="Create game"
+            fetcherKey={CreateGameFetcherKey}
+            {...props}
+        >
             <Input
                 isRequired
                 required
