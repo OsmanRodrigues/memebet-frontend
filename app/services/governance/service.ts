@@ -11,14 +11,14 @@ export const createValidationFunction = ({
     functionName,
     provider,
     signerAddress
-}: CreateValidationFunctionArgs) => {
-    return requestBuilder
+}: CreateValidationFunctionArgs) =>
+    requestBuilder
         .config({ provider, signerAddress })
         .send<undefined>(advanceABI.addValidationFunction.name, [
             transformUTF8toHex(functionName),
             transformUTF8toHex(functionCode)
         ]);
-};
+
 export const createGame = ({
     home,
     away,
@@ -28,8 +28,8 @@ export const createGame = ({
     validatorFunctionName,
     provider,
     signerAddress
-}: CreateGameArgs) => {
-    return requestBuilder
+}: CreateGameArgs) =>
+    requestBuilder
         .config({ provider, signerAddress })
         .send<undefined>(advanceABI.createGame.name, [
             transformUTF8toHex(home),
@@ -39,4 +39,3 @@ export const createGame = ({
             end,
             transformUTF8toHex(validatorFunctionName)
         ]);
-};
