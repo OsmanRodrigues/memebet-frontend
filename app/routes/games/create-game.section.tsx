@@ -4,7 +4,6 @@ import {
     CardFooter,
     CardHeader,
     DateInput,
-    DateValue,
     Divider,
     Input,
     Modal,
@@ -15,7 +14,30 @@ import {
     ModalProps,
     useDisclosure
 } from '@nextui-org/react';
-import { useState } from 'react';
+import { useFetcher } from '@remix-run/react';
+import type {
+    CreateGameArgs,
+    CreateValidationFunctionArgs
+} from '~/services/governance/type';
+
+export type CreateGameFetcherData = Omit<
+    CreateValidationFunctionArgs & CreateGameArgs,
+    'signerAddress' | 'provider' | 'validatorFunctionName'
+>;
+
+const CreateGameFetcherKey = 'create-game-fetcher';
+const fetcherFormKey: Record<
+    keyof CreateGameFetcherData,
+    keyof CreateGameFetcherData
+> = {
+    functionName: 'functionName',
+    functionCode: 'functionCode',
+    home: 'home',
+    away: 'away',
+    token: 'token',
+    start: 'start',
+    end: 'end'
+};
 
 export const CreateGameSection = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -54,17 +76,9 @@ export const CreateGameSection = () => {
 const CreateGameModal = (
     props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
 ) => {
-    const [bettingDate, setBettingDate] = useState<
-        Record<'startTime' | 'endTime', DateValue | null>
-    >({
-        startTime: null,
-        endTime: null
+    const fetcher = useFetcher<CreateGameFetcherData>({
+        key: CreateGameFetcherKey
     });
-
-    const onStartTimeSelected = (selectedDate: DateValue) =>
-        setBettingDate(prev => ({ ...prev, startTime: selectedDate }));
-    const onEndTimeSelected = (selectedDate: DateValue) =>
-        setBettingDate(prev => ({ ...prev, endTime: selectedDate }));
 
     return (
         <Modal
@@ -79,65 +93,68 @@ const CreateGameModal = (
                         <ModalHeader className="flex flex-col gap-1">
                             Create game
                         </ModalHeader>
-                        <ModalBody>
-                            <h3>Validation function</h3>
-                            <Input
-                                autoFocus
-                                label="Name"
-                                placeholder="Enter function name"
-                                variant="bordered"
-                            />
-                            <Input
-                                label="Code"
-                                placeholder="Enter function code"
-                                variant="bordered"
-                            />
-                            <Divider />
-                            <h3>Game infos</h3>
-                            <Input
-                                label="Home pick"
-                                placeholder="Enter the first betting pick option"
-                                variant="bordered"
-                            />
-                            <Input
-                                label="Away pick"
-                                placeholder="Enter the second betting pick option"
-                                variant="bordered"
-                            />
-                            <Input
-                                label="Token"
-                                placeholder="Enter the token used to betting"
-                                variant="bordered"
-                            />
-                            <DateInput
-                                label="Starts at"
-                                variant="bordered"
-                                granularity="minute"
-                                value={bettingDate.startTime}
-                                onChange={onStartTimeSelected}
-                                // placeholder="Select the date/time to start betting"
-                            />
-                            <DateInput
-                                label="Ends at"
-                                variant="bordered"
-                                granularity="minute"
-                                value={bettingDate.endTime}
-                                onChange={onEndTimeSelected}
-                                // placeholder="Select the date/time to finish betting"
-                            />
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button
-                                color="default"
-                                variant="flat"
-                                onPress={onClose}
-                            >
-                                Cancel
-                            </Button>
-                            <Button color="secondary" onPress={onClose}>
-                                Create
-                            </Button>
-                        </ModalFooter>
+                        <fetcher.Form method="POST" action="/resource/game">
+                            <ModalBody>
+                                <h3>Validation function</h3>
+                                <Input
+                                    name={fetcherFormKey.functionName}
+                                    autoFocus
+                                    label="Name"
+                                    placeholder="Enter function name"
+                                    variant="bordered"
+                                />
+                                <Input
+                                    name={fetcherFormKey.functionCode}
+                                    label="Code"
+                                    placeholder="Enter function code"
+                                    variant="bordered"
+                                />
+                                <Divider />
+                                <h3>Game infos</h3>
+                                <Input
+                                    name={fetcherFormKey.home}
+                                    label="Home pick"
+                                    placeholder="Enter the first betting pick option"
+                                    variant="bordered"
+                                />
+                                <Input
+                                    name={fetcherFormKey.away}
+                                    label="Away pick"
+                                    placeholder="Enter the second betting pick option"
+                                    variant="bordered"
+                                />
+                                <Input
+                                    name={fetcherFormKey.token}
+                                    label="Token"
+                                    placeholder="Enter the token used to betting"
+                                    variant="bordered"
+                                />
+                                <DateInput
+                                    name={fetcherFormKey.start}
+                                    label="Betting starts at"
+                                    variant="bordered"
+                                    granularity="minute"
+                                />
+                                <DateInput
+                                    name={fetcherFormKey.end}
+                                    label="Betting deadline"
+                                    variant="bordered"
+                                    granularity="minute"
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="default"
+                                    variant="flat"
+                                    onPress={onClose}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button color="secondary" type="submit">
+                                    Create
+                                </Button>
+                            </ModalFooter>
+                        </fetcher.Form>
                     </>
                 )}
             </ModalContent>
