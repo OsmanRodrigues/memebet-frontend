@@ -41,7 +41,10 @@ export function Layout({ children }: PropsWithChildren) {
             <body className="dark text-foreground bg-background">
                 <NextUIProvider>
                     <Header />
-                    <Toaster position="bottom-center" />
+                    <Toaster
+                        position="bottom-center"
+                        toastOptions={{ duration: 4000 }}
+                    />
                     <Main>{children}</Main>
                     <ScrollRestoration />
                     <Scripts />
