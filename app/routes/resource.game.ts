@@ -1,11 +1,12 @@
-import { ActionFunctionArgs, json } from '@remix-run/node';
-import { ClientActionFunctionArgs } from '@remix-run/react';
+import { json } from '@remix-run/node';
 import { getWalletCookie } from '~/use-cases/wallet/cookies';
-import { CreateGameFetcherData } from './games/create-game.section';
 import {
     createGame,
     createValidationFunction
 } from '~/services/governance/service';
+import type { ActionFunctionArgs } from '@remix-run/node';
+import type { ClientActionFunctionArgs } from '@remix-run/react';
+import type { CreateGameFetcherData } from './games/create-game.section';
 
 export async function action({ request }: ActionFunctionArgs) {
     const wallet = await getWalletCookie(request);
