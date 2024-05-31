@@ -78,9 +78,14 @@ class RequestBuilderSingleton {
                     provider: this.provider,
                     signerAddress: this.signerAddress as Address
                 });
-                await this.requester.sendInput(actionName, args ?? []);
+                const transactionHash = await this.requester.sendInput(
+                    actionName,
+                    args ?? []
+                );
 
-                logSuccess('Input sent successfully!->');
+                logSuccess(
+                    `Input sent successfully!-> transaction hash:${transactionHash} | ${new Date().toISOString()}`
+                );
 
                 return { ok: true };
             } else {
