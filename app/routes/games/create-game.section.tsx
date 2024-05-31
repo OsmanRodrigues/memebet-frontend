@@ -4,7 +4,6 @@ import {
     CardFooter,
     CardHeader,
     DateInput,
-    Divider,
     Input,
     Modal,
     ModalBody,
@@ -12,6 +11,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalProps,
+    Textarea,
     useDisclosure
 } from '@nextui-org/react';
 import { useFetcher } from '@remix-run/react';
@@ -20,31 +20,43 @@ import type {
     CreateValidationFunctionArgs
 } from '~/services/governance/type';
 
+export type CreateFunctionFetcherData = Omit<
+    CreateValidationFunctionArgs,
+    'signerAddress' | 'provider'
+>;
 export type CreateGameFetcherData = Omit<
-    CreateValidationFunctionArgs & CreateGameArgs,
-    'signerAddress' | 'provider' | 'validatorFunctionName'
+    CreateGameArgs,
+    'signerAddress' | 'provider'
 >;
 
+const CreateFunctionFetcherKey = 'create-function-fetcher';
 const CreateGameFetcherKey = 'create-game-fetcher';
-const fetcherFormKey: Record<
+const createFunctionFetcherFormKey: Record<
+    keyof CreateFunctionFetcherData,
+    keyof CreateFunctionFetcherData
+> = {
+    functionCode: 'functionCode',
+    functionName: 'functionName'
+};
+const createGameFetcherFormKey: Record<
     keyof CreateGameFetcherData,
     keyof CreateGameFetcherData
 > = {
-    functionName: 'functionName',
-    functionCode: 'functionCode',
     home: 'home',
     away: 'away',
     token: 'token',
     start: 'start',
-    end: 'end'
+    end: 'end',
+    validatorFunctionName: 'validatorFunctionName'
 };
 
 export const CreateGameSection = () => {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const createFunctionModal = useDisclosure();
+    const createGameModal = useDisclosure();
 
     return (
         <section className="py-6">
-            <Card className="w-full h-[128px] col-span-12 bg-secondary-400 sm:col-span-5">
+            <Card className="w-full h-[128px] col-span-12 bg-secondary-400 mobile:h-[176px]">
                 <CardHeader className="absolute z-10 top-1 flex-col items-start">
                     <p className="text-tiny text-gray-300 uppercase font-bold">
                         Governance
@@ -53,31 +65,54 @@ export const CreateGameSection = () => {
                         DAO member
                     </h4>
                 </CardHeader>
-                <CardFooter className="absolute bottom-0 z-10 justify-between">
+                <CardFooter className="absolute bottom-0 z-10 justify-between mobile:flex-col">
                     <p className="text-gray-200">
-                        Create new game for general users betting and spark the
-                        hype! 💥
+                        Create a validation function or a new game for general
+                        users and let the betting happen! 💥
                     </p>
-                    <Button
-                        className="text-tiny"
-                        color="secondary"
-                        radius="full"
-                        size="sm"
-                        onClick={onOpen}
-                    >
-                        Create game
-                    </Button>
+                    <div className="flex flex-row justify-end gap-2 mobile:w-full">
+                        <CTAButton
+                            onClick={createFunctionModal.onOpen}
+                            text="New function"
+                        />
+                        <span>or</span>
+                        <CTAButton
+                            onClick={createGameModal.onOpen}
+                            text="New game"
+                        />
+                    </div>
                 </CardFooter>
             </Card>
-            <CreateGameModal isOpen={isOpen} onOpenChange={onOpenChange} />
+            <CreateFunctionModal
+                isOpen={createFunctionModal.isOpen}
+                onOpenChange={createFunctionModal.onOpenChange}
+            />
+            <CreateGameModal
+                isOpen={createGameModal.isOpen}
+                onOpenChange={createGameModal.onOpenChange}
+            />
         </section>
     );
 };
-const CreateGameModal = (
-    props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
+const CTAButton = (props: { text: string; onClick: () => void }) => (
+    <Button
+        className="text-tiny"
+        color="secondary"
+        radius="full"
+        size="sm"
+        onClick={props.onClick}
+    >
+        {props.text}
+    </Button>
+);
+const ModalDefault = (
+    props: Pick<
+        ModalProps,
+        'isOpen' | 'onOpenChange' | 'children' | 'title' | 'key'
+    >
 ) => {
-    const fetcher = useFetcher<CreateGameFetcherData>({
-        key: CreateGameFetcherKey
+    const fetcher = useFetcher({
+        key: props.key ? props.key.toString() : undefined
     });
 
     return (
@@ -91,57 +126,10 @@ const CreateGameModal = (
                 {onClose => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            Create game
+                            {props.title}
                         </ModalHeader>
                         <fetcher.Form method="POST" action="/resource/game">
-                            <ModalBody>
-                                <h3>Validation function</h3>
-                                <Input
-                                    name={fetcherFormKey.functionName}
-                                    autoFocus
-                                    label="Name"
-                                    placeholder="Enter function name"
-                                    variant="bordered"
-                                />
-                                <Input
-                                    name={fetcherFormKey.functionCode}
-                                    label="Code"
-                                    placeholder="Enter function code"
-                                    variant="bordered"
-                                />
-                                <Divider />
-                                <h3>Game infos</h3>
-                                <Input
-                                    name={fetcherFormKey.home}
-                                    label="Home pick"
-                                    placeholder="Enter the first betting pick option"
-                                    variant="bordered"
-                                />
-                                <Input
-                                    name={fetcherFormKey.away}
-                                    label="Away pick"
-                                    placeholder="Enter the second betting pick option"
-                                    variant="bordered"
-                                />
-                                <Input
-                                    name={fetcherFormKey.token}
-                                    label="Token"
-                                    placeholder="Enter the token used to betting"
-                                    variant="bordered"
-                                />
-                                <DateInput
-                                    name={fetcherFormKey.start}
-                                    label="Betting starts at"
-                                    variant="bordered"
-                                    granularity="minute"
-                                />
-                                <DateInput
-                                    name={fetcherFormKey.end}
-                                    label="Betting deadline"
-                                    variant="bordered"
-                                    granularity="minute"
-                                />
-                            </ModalBody>
+                            <ModalBody>{props.children}</ModalBody>
                             <ModalFooter>
                                 <Button
                                     color="default"
@@ -161,3 +149,74 @@ const CreateGameModal = (
         </Modal>
     );
 };
+const CreateFunctionModal = (
+    props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
+) => (
+    <ModalDefault
+        title="Create function"
+        key={CreateFunctionFetcherKey}
+        {...props}
+    >
+        <Input
+            name={createFunctionFetcherFormKey.functionName}
+            autoFocus
+            label="Name"
+            placeholder="Enter function name"
+            variant="bordered"
+        />
+        <Textarea
+            name={createFunctionFetcherFormKey.functionCode}
+            label="Code"
+            placeholder="Enter function code"
+            variant="bordered"
+            classNames={{
+                base: 'w-full',
+                input: 'resize-y min-h-[64px]'
+            }}
+            disableAnimation
+            disableAutosize
+        />
+    </ModalDefault>
+);
+const CreateGameModal = (
+    props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
+) => (
+    <ModalDefault title="Create game" key={CreateGameFetcherKey} {...props}>
+        <Input
+            name={createGameFetcherFormKey.home}
+            label="Home pick"
+            placeholder="Enter the first betting pick option"
+            variant="bordered"
+        />
+        <Input
+            name={createGameFetcherFormKey.away}
+            label="Away pick"
+            placeholder="Enter the second betting pick option"
+            variant="bordered"
+        />
+        <Input
+            name={createGameFetcherFormKey.token}
+            label="Token"
+            placeholder="Enter the token used to betting"
+            variant="bordered"
+        />
+        <DateInput
+            name={createGameFetcherFormKey.start}
+            label="Betting starts at"
+            variant="bordered"
+            granularity="minute"
+        />
+        <DateInput
+            name={createGameFetcherFormKey.end}
+            label="Betting deadline"
+            variant="bordered"
+            granularity="minute"
+        />
+        <Input
+            name={createGameFetcherFormKey.validatorFunctionName}
+            label="Function name"
+            placeholder="Enter the validation function name"
+            variant="bordered"
+        />
+    </ModalDefault>
+);
