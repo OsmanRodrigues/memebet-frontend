@@ -15,6 +15,8 @@ import {
     useDisclosure
 } from '@nextui-org/react';
 import { useFetcher } from '@remix-run/react';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import type {
     CreateGameArgs,
     CreateValidationFunctionArgs
@@ -111,10 +113,15 @@ const ModalDefault = (
         'isOpen' | 'onOpenChange' | 'children' | 'title'
     > & { fetcherKey: string }
 ) => {
-    const fetcher = useFetcher({
+    const fetcher = useFetcher<any>({
         key: props.fetcherKey
     });
     const isPending = fetcher.state !== 'idle';
+
+    useEffect(() => {
+        if (fetcher.data?.ok) toast.success('Created successfully!');
+        else if (fetcher.data?.error) toast.error(fetcher.data.error);
+    }, [fetcher.data]);
 
     return (
         <Modal
