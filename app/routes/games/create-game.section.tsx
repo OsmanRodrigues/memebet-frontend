@@ -151,72 +151,90 @@ const ModalDefault = (
 };
 const CreateFunctionModal = (
     props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
-) => (
-    <ModalDefault
-        title="Create function"
-        key={CreateFunctionFetcherKey}
-        {...props}
-    >
-        <Input
-            name={createFunctionFetcherFormKey.functionName}
-            autoFocus
-            label="Name"
-            placeholder="Enter function name"
-            variant="bordered"
-        />
-        <Textarea
-            name={createFunctionFetcherFormKey.functionCode}
-            label="Code"
-            placeholder="Enter function code"
-            variant="bordered"
-            classNames={{
-                base: 'w-full',
-                input: 'resize-y min-h-[64px]'
-            }}
-            disableAnimation
-            disableAutosize
-        />
-    </ModalDefault>
-);
+) => {
+    return (
+        <ModalDefault
+            title="Create function"
+            key={CreateFunctionFetcherKey}
+            {...props}
+        >
+            <Input
+                isRequired
+                required
+                name={createFunctionFetcherFormKey.functionName}
+                autoFocus
+                label="Name"
+                placeholder="Enter function name"
+                variant="bordered"
+            />
+            <Textarea
+                isRequired
+                required
+                name={createFunctionFetcherFormKey.functionCode}
+                label="Code"
+                placeholder="Enter function code"
+                variant="bordered"
+                classNames={{
+                    base: 'w-full',
+                    input: 'resize-y min-h-[64px]'
+                }}
+                disableAnimation
+                disableAutosize
+            />
+        </ModalDefault>
+    );
+};
 const CreateGameModal = (
     props: Pick<ModalProps, 'isOpen' | 'onOpenChange'>
-) => (
-    <ModalDefault title="Create game" key={CreateGameFetcherKey} {...props}>
-        <Input
-            name={createGameFetcherFormKey.home}
-            label="Home pick"
-            placeholder="Enter the first betting pick option"
-            variant="bordered"
-        />
-        <Input
-            name={createGameFetcherFormKey.away}
-            label="Away pick"
-            placeholder="Enter the second betting pick option"
-            variant="bordered"
-        />
-        <Input
-            name={createGameFetcherFormKey.token}
-            label="Token"
-            placeholder="Enter the token used to betting"
-            variant="bordered"
-        />
-        <DateInput
-            name={createGameFetcherFormKey.start}
-            label="Betting starts at"
-            variant="bordered"
-            granularity="minute"
-        />
-        <DateInput
-            name={createGameFetcherFormKey.end}
-            label="Betting deadline"
-            variant="bordered"
-            granularity="minute"
-        />
-        <Input
-            name={createGameFetcherFormKey.validatorFunctionName}
-            label="Function name"
-            placeholder="Enter the validation function name"
-            variant="bordered"
-        />
-    </ModalDefault>
-);
+) => {
+    return (
+        <ModalDefault title="Create game" key={CreateGameFetcherKey} {...props}>
+            <Input
+                isRequired
+                required
+                name={createGameFetcherFormKey.home}
+                label="Home pick"
+                placeholder="Enter the first betting pick option"
+                variant="bordered"
+            />
+            <Input
+                isRequired
+                required
+                name={createGameFetcherFormKey.away}
+                label="Away pick"
+                placeholder="Enter the second betting pick option"
+                variant="bordered"
+            />
+            <Input
+                isRequired
+                required
+                name={createGameFetcherFormKey.token}
+                label="Token"
+                placeholder="Enter the token used to betting"
+                variant="bordered"
+            />
+            <DateInput
+                isRequired
+                name={createGameFetcherFormKey.start}
+                label="Betting starts at"
+                variant="bordered"
+                granularity="minute"
+            />
+            <DateInput
+                isRequired
+                name={createGameFetcherFormKey.end}
+                label="Betting deadline"
+                variant="bordered"
+                granularity="minute"
+            />
+            <Input
+                isRequired
+                required
+                name={createGameFetcherFormKey.validatorFunctionName}
+                label="Function name"
+                placeholder="Enter the validation function name"
+                variant="bordered"
+            />
+        </ModalDefault>
+    );
+};
