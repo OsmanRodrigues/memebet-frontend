@@ -32,12 +32,9 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
     const { formData, wallet } = serverRes;
     const validateFormData = (formData: Partial<typeof serverRes.formData>) => {
         if (Object.values(formData).some(value => !value))
-            throw new Response(
-                'Create form data must be filled with all required fields.',
-                {
-                    status: 500
-                }
-            );
+            return {
+                error: 'Create form data must be filled with all required fields.'
+            };
     };
     const { functionName, functionCode, ...leftovers } = formData;
 
@@ -50,13 +47,11 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
         });
 
         if (!createValidationFunctionRes.ok)
-            throw new Response(
-                createValidationFunctionRes.error ??
-                    'An error occurried while create the function.',
-                {
-                    status: 500
-                }
-            );
+            return {
+                error:
+                    createValidationFunctionRes.error ??
+                    'An error occurried while create the function.'
+            };
 
         return createValidationFunctionRes;
     } else {
@@ -74,13 +69,11 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
         });
 
         if (!createGameRes.ok)
-            throw new Response(
-                createGameRes.error ??
-                    'An error occurried while create the game.',
-                {
-                    status: 500
-                }
-            );
+            return {
+                error:
+                    createGameRes.error ??
+                    'An error occurried while create the game.'
+            };
 
         return createGameRes;
     }
