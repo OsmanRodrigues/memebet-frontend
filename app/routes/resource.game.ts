@@ -6,14 +6,16 @@ import {
 } from '~/services/governance/service';
 import type { ActionFunctionArgs } from '@remix-run/node';
 import type { ClientActionFunctionArgs } from '@remix-run/react';
-import type { CreateGameFetcherData } from './games/create-game.section';
+import type {
+    CreateFunctionFetcherData,
+    CreateGameFetcherData
+} from './games/create-game.section';
 
 export async function action({ request }: ActionFunctionArgs) {
     const wallet = await getWalletCookie(request);
 
     if (wallet.address) {
         const formData = Object.fromEntries(await request.formData());
-
         return json({ wallet, formData });
     }
 
@@ -26,27 +28,41 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
     try {
         const serverRes = await serverAction<{
             wallet: { address: string };
-            formData: CreateGameFetcherData;
+            formData: CreateFunctionFetcherData & CreateGameFetcherData;
         }>();
         const { formData, wallet } = serverRes;
-        await createValidationFunction({
-            provider: window.ethereum,
-            signerAddress: wallet.address,
-            functionName: formData.functionName,
-            functionCode: formData.functionCode
-        });
-        await createGame({
-            provider: window.ethereum,
-            signerAddress: wallet.address,
-            home: formData.home,
-            away: formData.away,
-            token: formData.token,
-            start: new Date(formData.start).getTime(),
-            end: new Date(formData.end).getTime(),
-            validatorFunctionName: formData.functionName
-        });
+        const validateFormData = (
+            formData: Partial<typeof serverRes.formData>
+        ) => {
+            if (Object.values(formData).some(value => !value))
+                throw new Error(
+                    'Create form data must be filled with all required fields.'
+                );
+        };
+        const { functionName, functionCode, ...leftovers } = formData;
 
-        return json({ ok: true, status: 201 });
+        if (functionName && functionCode) {
+            await createValidationFunction({
+                provider: window.ethereum,
+                signerAddress: wallet.address,
+                functionName: formData.functionName,
+                functionCode: formData.functionCode
+            });
+        } else {
+            validateFormData(leftovers);
+
+            await createGame({
+                provider: window.ethereum,
+                signerAddress: wallet.address,
+                home: formData.home,
+                away: formData.away,
+                token: formData.token,
+                start: new Date(formData.start).getTime(),
+                end: new Date(formData.end).getTime(),
+                validatorFunctionName: formData.validatorFunctionName
+            });
+        }
+        return null;
     } catch (err: any) {
         throw new Response(
             err.message ?? 'An error occurried while create a game.',
