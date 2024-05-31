@@ -25,50 +25,63 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
-    try {
-        const serverRes = await serverAction<{
-            wallet: { address: string };
-            formData: CreateFunctionFetcherData & CreateGameFetcherData;
-        }>();
-        const { formData, wallet } = serverRes;
-        const validateFormData = (
-            formData: Partial<typeof serverRes.formData>
-        ) => {
-            if (Object.values(formData).some(value => !value))
-                throw new Error(
-                    'Create form data must be filled with all required fields.'
-                );
-        };
-        const { functionName, functionCode, ...leftovers } = formData;
+    const serverRes = await serverAction<{
+        wallet: { address: string };
+        formData: CreateFunctionFetcherData & CreateGameFetcherData;
+    }>();
+    const { formData, wallet } = serverRes;
+    const validateFormData = (formData: Partial<typeof serverRes.formData>) => {
+        if (Object.values(formData).some(value => !value))
+            throw new Response(
+                'Create form data must be filled with all required fields.',
+                {
+                    status: 500
+                }
+            );
+    };
+    const { functionName, functionCode, ...leftovers } = formData;
 
-        if (functionName && functionCode) {
-            await createValidationFunction({
-                provider: window.ethereum,
-                signerAddress: wallet.address,
-                functionName: formData.functionName,
-                functionCode: formData.functionCode
-            });
-        } else {
-            validateFormData(leftovers);
+    if (functionName && functionCode) {
+        const createValidationFunctionRes = await createValidationFunction({
+            provider: window.ethereum,
+            signerAddress: wallet.address,
+            functionName: formData.functionName,
+            functionCode: formData.functionCode
+        });
 
-            await createGame({
-                provider: window.ethereum,
-                signerAddress: wallet.address,
-                home: formData.home,
-                away: formData.away,
-                token: formData.token,
-                start: new Date(formData.start).getTime(),
-                end: new Date(formData.end).getTime(),
-                validatorFunctionName: formData.validatorFunctionName
-            });
-        }
-        return null;
-    } catch (err: any) {
-        throw new Response(
-            err.message ?? 'An error occurried while create a game.',
-            {
-                status: 500
-            }
-        );
+        if (!createValidationFunctionRes.ok)
+            throw new Response(
+                createValidationFunctionRes.error ??
+                    'An error occurried while create the function.',
+                {
+                    status: 500
+                }
+            );
+
+        return createValidationFunctionRes;
+    } else {
+        validateFormData(leftovers);
+
+        const createGameRes = await createGame({
+            provider: window.ethereum,
+            signerAddress: wallet.address,
+            home: formData.home,
+            away: formData.away,
+            token: formData.token,
+            start: new Date(formData.start).getTime(),
+            end: new Date(formData.end).getTime(),
+            validatorFunctionName: formData.validatorFunctionName
+        });
+
+        if (!createGameRes.ok)
+            throw new Response(
+                createGameRes.error ??
+                    'An error occurried while create the game.',
+                {
+                    status: 500
+                }
+            );
+
+        return createGameRes;
     }
 }
