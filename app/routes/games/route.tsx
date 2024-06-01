@@ -7,13 +7,16 @@ import * as gamesUseCase from '~/use-cases/games/functions';
 import { AuthFetcherKey } from '~/components/header';
 import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import type { WalletData } from '~/use-cases/wallet';
 import { ErrorFallback } from '~/components/error-fallback';
+import type { WalletData } from '~/use-cases/wallet';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-    console.log('request.method, params ->', request.method, params);
-    return await gamesUseCase.getGamesList();
+// { request, params }: LoaderFunctionArgs
+export async function loader() {
+    const gamesListRes = await gamesUseCase.getGamesList();
+
+    if (gamesListRes.gamesList) return gamesListRes;
+
+    return { ...gamesListRes, gamesList: [] };
 }
 
 export default function Games() {
