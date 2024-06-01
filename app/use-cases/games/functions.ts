@@ -1,6 +1,14 @@
 import * as gamesService from '~/services/games/service';
+import type { Game } from '~/services/games/type';
 
-export const getGamesList = async () => {
+export type GetGamesListResponse = {
+    gamesList?: Game[];
+    message?: string;
+    error?: any;
+    status?: number;
+};
+
+export const getGamesList = async (): Promise<GetGamesListResponse> => {
     const gamesServiceRes = await gamesService.getGamesList();
 
     if (!gamesServiceRes.ok) {
@@ -15,4 +23,6 @@ export const getGamesList = async () => {
         };
     else if (typeof gamesServiceRes.data === 'string')
         return { message: gamesServiceRes.data };
+
+    return {};
 };
