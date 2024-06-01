@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 import type {
     CreateFunctionData,
     CreateGameData
-} from '~/use-cases/governance/functions';
+} from '~/use-cases/governance/type';
 
 export type CreateFunctionFetcherData = CreateFunctionData;
 export type CreateGameFetcherData = CreateGameData;
