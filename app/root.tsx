@@ -11,9 +11,10 @@ import {
 } from '@remix-run/react';
 import stylesheet from '~/tailwind.css?url';
 import { NextUIProvider } from '@nextui-org/react';
+import { Toaster } from 'react-hot-toast';
 import { Header } from './components/header';
 import { Main } from './components/main';
-import { Toaster } from 'react-hot-toast';
+import { ErrorFallback } from './components/error-fallback';
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
@@ -59,23 +60,13 @@ export default function App() {
 }
 
 export function ErrorBoundary() {
-    const error = useRouteError() as Error;
-
-    if (isRouteErrorResponse(error)) {
-        return (
-            <>
-                <h1>
-                    {error.status} {error.statusText}
-                </h1>
-                <p>{error.data}</p>
-            </>
-        );
-    }
+    const error = useRouteError() as any;
 
     return (
-        <>
-            <h1>Error!</h1>
-            <p>{error?.message ?? 'Unknown error'}</p>
-        </>
+        <ErrorFallback
+            title="Root Error"
+            error={error}
+            isRouteError={isRouteErrorResponse(error)}
+        />
     );
 }
