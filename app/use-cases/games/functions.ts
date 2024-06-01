@@ -1,8 +1,12 @@
 import * as gamesService from '~/services/games/service';
 import type { Game } from '~/services/games/type';
 
+export type GameViewModel = Pick<
+    Game,
+    'id' | 'picks' | 'startTime' | 'endTime' | 'betPool'
+>;
 export type GetGamesListResponse = {
-    gamesList?: Game[];
+    gamesList?: GameViewModel[];
     message?: string;
     error?: any;
     status?: number;
