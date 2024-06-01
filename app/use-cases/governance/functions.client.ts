@@ -1,4 +1,3 @@
-import { getWalletCookie } from '../wallet/cookies';
 import { validateFormData } from './helpers';
 import * as governanceService from '~/services/governance/service';
 import type {
@@ -6,31 +5,6 @@ import type {
     CreateValidationFunctionArgs
 } from '~/services/governance/type';
 
-export type CreateFunctionData = Omit<
-    CreateValidationFunctionArgs,
-    'signerAddress' | 'provider'
->;
-export type CreateGameData = Omit<CreateGameArgs, 'signerAddress' | 'provider'>;
-
-export type PreActionResponse = {
-    wallet?: { address?: string };
-    formData?: CreateFunctionData & CreateGameData;
-    error?: string;
-    status?: number;
-};
-
-export const preAction = async (
-    request: Request
-): Promise<PreActionResponse> => {
-    const wallet = await getWalletCookie(request);
-
-    if (wallet.address) {
-        const formData = Object.fromEntries(await request.formData());
-        return { wallet, formData: formData as any };
-    }
-
-    return { error: 'User not authenticated!', status: 401 };
-};
 export const handleSubmitCreateValidationFunction = async (
     args: CreateValidationFunctionArgs
 ) => {
@@ -48,7 +22,7 @@ export const handleSubmitCreateValidationFunction = async (
 
     return createValidationFunctionRes;
 };
-export const handleSubmitCreateGameFunction = async (args: CreateGameArgs) => {
+export const handleSubmitCreateGame = async (args: CreateGameArgs) => {
     validateFormData(args);
 
     const createGameRes = await governanceService.createGame({
