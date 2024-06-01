@@ -7,10 +7,10 @@ import {
     TableRow
 } from '@nextui-org/react';
 import { useLoaderData } from '@remix-run/react';
-import { SectionWrapper } from '~/components/section';
+import { SectionWrapper } from '~/components/wrapper/section';
 import { Heading } from '~/components/typography/heading';
 import type { GetGamesListResponse } from '~/use-cases/games/functions';
-import type { SectionWrapperProps } from '~/components/section';
+import type { SectionWrapperProps } from '~/components/wrapper/section';
 
 const gameTableColumnKey = {
     picks: 'picks',

@@ -13,7 +13,7 @@ import stylesheet from '~/tailwind.css?url';
 import { NextUIProvider } from '@nextui-org/react';
 import { Toaster } from 'react-hot-toast';
 import { Header } from './components/header';
-import { Main } from './components/main';
+import { MainWrapper } from './components/wrapper/main';
 import { ErrorFallback } from './components/error-fallback';
 
 export const links: LinksFunction = () => [
@@ -46,7 +46,7 @@ export function Layout({ children }: PropsWithChildren) {
                         position="bottom-center"
                         toastOptions={{ duration: 4000 }}
                     />
-                    <Main>{children}</Main>
+                    <MainWrapper>{children}</MainWrapper>
                     <ScrollRestoration />
                     <Scripts />
                 </NextUIProvider>
