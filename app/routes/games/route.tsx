@@ -24,9 +24,8 @@ export default function Games() {
 
     return (
         <>
-            <h1>Games page</h1>
             {wallet.data?.isDAOMember && <CreateGameSection />}
-            <GamesListSection />
+            <GamesListSection isFirstOfPage={!wallet.data?.isDAOMember} />
         </>
     );
 }
