@@ -18,18 +18,12 @@ import { useFetcher } from '@remix-run/react';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import type {
-    CreateGameArgs,
-    CreateValidationFunctionArgs
-} from '~/services/governance/type';
+    CreateFunctionData,
+    CreateGameData
+} from '~/use-cases/governance/functions';
 
-export type CreateFunctionFetcherData = Omit<
-    CreateValidationFunctionArgs,
-    'signerAddress' | 'provider'
->;
-export type CreateGameFetcherData = Omit<
-    CreateGameArgs,
-    'signerAddress' | 'provider'
->;
+export type CreateFunctionFetcherData = CreateFunctionData;
+export type CreateGameFetcherData = CreateGameData;
 
 const CreateFunctionFetcherKey = 'create-function-fetcher';
 const CreateGameFetcherKey = 'create-game-fetcher';
