@@ -17,6 +17,7 @@ import {
 import { useFetcher } from '@remix-run/react';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { SectionWrapper } from '~/components/wrapper/section';
 import type {
     CreateFunctionData,
     CreateGameData
@@ -51,7 +52,7 @@ export const CreateGameSection = () => {
     const createGameModal = useDisclosure();
 
     return (
-        <section className="py-6">
+        <SectionWrapper isFirstOfPage>
             <Card className="w-full h-[128px] col-span-12 bg-secondary-400 mobile:h-[176px]">
                 <CardHeader className="absolute z-10 top-1 flex-col items-start">
                     <p className="text-tiny text-gray-300 uppercase font-bold">
@@ -87,7 +88,7 @@ export const CreateGameSection = () => {
                 isOpen={createGameModal.isOpen}
                 onOpenChange={createGameModal.onOpenChange}
             />
-        </section>
+        </SectionWrapper>
     );
 };
 const CTAButton = (props: { text: string; onClick: () => void }) => (
