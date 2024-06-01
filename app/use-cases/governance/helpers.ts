@@ -1,4 +1,4 @@
-import type { PreActionResponse } from './functions';
+import type { PreActionResponse } from './type';
 
 export const validateFormData = (
     formData: Partial<PreActionResponse['formData']>
