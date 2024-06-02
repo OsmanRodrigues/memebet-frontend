@@ -3,20 +3,30 @@ import {
     useFetcher,
     useRouteError
 } from '@remix-run/react';
+import { json } from '@remix-run/node';
 import * as gamesUseCase from '~/use-cases/games/functions';
 import { AuthFetcherKey } from '~/components/header';
+import { ErrorFallback } from '~/components/error-fallback';
 import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
-import { ErrorFallback } from '~/components/error-fallback';
-import type { WalletData } from '~/use-cases/wallet';
+import { timer, logInfo } from '~/utils';
 
-// { request, params }: LoaderFunctionArgs
-export async function loader() {
+import type { WalletData } from '~/use-cases/wallet';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+
+export async function loader({ request }: LoaderFunctionArgs) {
+    const query = new URL(request.url).searchParams;
+
+    if (query.has('refetch')) {
+        await timer(2000);
+        logInfo(`refetching games list...`);
+    }
+
     const gamesListRes = await gamesUseCase.getGamesList();
 
-    if (gamesListRes.gamesList) return gamesListRes;
+    if (gamesListRes.gamesList) return json(gamesListRes);
 
-    return { ...gamesListRes, gamesList: [] };
+    return json({ ...gamesListRes, gamesList: [] });
 }
 
 export default function Games() {
