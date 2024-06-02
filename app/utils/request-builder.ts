@@ -84,7 +84,7 @@ class RequestBuilderSingleton {
                 );
 
                 logSuccess(
-                    `Input sent successfully!-> transaction hash:${transactionHash} | ${new Date().toISOString()}`
+                    `Input sent successfully!-> transaction hash:${transactionHash}`
                 );
 
                 return { ok: true };
