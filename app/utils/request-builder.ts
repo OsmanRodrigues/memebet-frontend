@@ -58,7 +58,7 @@ class RequestBuilderSingleton {
 
             return { ok: true, data: payload };
         } catch (err: any) {
-            throw { ok: false, error: err.message ?? err };
+            return { ok: false, error: err.message ?? err };
         }
     }
     async send<Result = any>(
