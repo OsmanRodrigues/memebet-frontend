@@ -6,7 +6,7 @@ import {
     TableHeader,
     TableRow
 } from '@nextui-org/react';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { Heading } from '~/components/typography/heading';
 import type { GetGamesListResponse } from '~/use-cases/games/functions';
@@ -28,11 +28,23 @@ export type GamesListSectionProps = Pick<SectionWrapperProps, 'isFirstOfPage'>;
 
 export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
     const loaderData = useLoaderData<GetGamesListResponse>();
+    const navigate = useNavigate();
 
     return (
         <SectionWrapper isFirstOfPage={isFirstOfPage}>
             <Heading>Available games</Heading>
-            <Table removeWrapper aria-label="Example static collection table">
+            <Table
+                classNames={{
+                    base: 'max-h-[312px] overflow-auto',
+                    table: 'min-h-[296px]'
+                }}
+                aria-label="Available games list"
+                selectionBehavior="toggle"
+                selectionMode="single"
+                onRowAction={itemKey => navigate(`/game/${itemKey}`)}
+                removeWrapper
+                isHeaderSticky
+            >
                 <TableHeader columns={tableColumns}>
                     {column => (
                         <TableColumn key={column.key}>
