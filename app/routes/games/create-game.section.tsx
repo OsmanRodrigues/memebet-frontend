@@ -128,7 +128,6 @@ const ModalDefault = (
             });
             props.onOpenChange?.(false);
         } else if (fetcher.data?.error) toast.error(fetcher.data.error);
-        return () => navigate('/games', { replace: true });
     }, [fetcher.data]);
 
     return (
