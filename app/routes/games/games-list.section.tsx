@@ -9,6 +9,8 @@ import {
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { Heading } from '~/components/typography/heading';
+import { textShortener, getDateStr } from '~/utils';
+
 import type { GetGamesListResponse } from '~/use-cases/games/functions';
 import type { SectionWrapperProps } from '~/components/wrapper/section';
 
@@ -70,37 +72,25 @@ export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
                                             </TableCell>
                                         );
                                     case 'start': {
-                                        const startDateFallback = Number.isNaN(
-                                            +item.startTime
-                                        )
-                                            ? 'invalid date'
-                                            : new Date(
-                                                  +item.startTime
-                                              ).toUTCString();
                                         return (
                                             <TableCell>
-                                                {startDateFallback}
+                                                {getDateStr(item.startTime)}
                                             </TableCell>
                                         );
                                     }
                                     case 'end': {
-                                        const endDateFallback = Number.isNaN(
-                                            +item.endTime
-                                        )
-                                            ? 'invalid date'
-                                            : new Date(
-                                                  +item.endTime
-                                              ).toUTCString();
                                         return (
                                             <TableCell>
-                                                {endDateFallback}
+                                                {getDateStr(item.endTime)}
                                             </TableCell>
                                         );
                                     }
                                     case 'token':
                                         return (
                                             <TableCell>
-                                                {item.betPool.tokenAddress}
+                                                {textShortener(
+                                                    item.betPool.tokenAddress
+                                                )}
                                             </TableCell>
                                         );
                                     case 'funds':
