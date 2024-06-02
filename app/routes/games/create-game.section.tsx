@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useFetcher, useNavigate } from '@remix-run/react';
 import {
     Button,
     Card,
@@ -14,10 +16,9 @@ import {
     Textarea,
     useDisclosure
 } from '@nextui-org/react';
-import { useFetcher } from '@remix-run/react';
-import { useEffect } from 'react';
-import toast from 'react-hot-toast';
 import { SectionWrapper } from '~/components/wrapper/section';
+import toast from 'react-hot-toast';
+
 import type {
     CreateFunctionData,
     CreateGameData
@@ -111,11 +112,19 @@ const ModalDefault = (
     const fetcher = useFetcher<any>({
         key: props.fetcherKey
     });
+    const navigate = useNavigate();
     const isPending = fetcher.state !== 'idle';
 
     useEffect(() => {
-        if (fetcher.data?.ok) toast.success('Created successfully!');
-        else if (fetcher.data?.error) toast.error(fetcher.data.error);
+        if (fetcher.data?.ok) {
+            toast.success('Created successfully!');
+            navigate({
+                pathname: '/games',
+                search: fetcher.data?.refetch ? '?refetch=true' : undefined
+            });
+            props.onOpenChange?.(false);
+        } else if (fetcher.data?.error) toast.error(fetcher.data.error);
+        return () => navigate('/games', { replace: true });
     }, [fetcher.data]);
 
     return (

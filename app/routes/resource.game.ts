@@ -31,10 +31,13 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
             }
         );
     } else {
-        return await governanceUseCaseClient.handleSubmitCreateGame({
-            provider: window.ethereum,
-            signerAddress: wallet.address!,
-            ...leftovers
-        });
+        return {
+            ...(await governanceUseCaseClient.handleSubmitCreateGame({
+                provider: window.ethereum,
+                signerAddress: wallet.address!,
+                ...leftovers
+            })),
+            refetch: true
+        };
     }
 }
