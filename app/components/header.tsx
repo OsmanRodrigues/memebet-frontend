@@ -1,4 +1,4 @@
-import { Link, useFetcher, useLocation } from '@remix-run/react';
+import { Link, useFetcher, useLocation, useNavigation } from '@remix-run/react';
 import ethIcon from '~/assets/images/eth-icon.svg';
 import {
     Avatar,
@@ -10,7 +10,8 @@ import {
     NavbarItem,
     NavbarMenu,
     NavbarMenuItem,
-    NavbarMenuToggle
+    NavbarMenuToggle,
+    Progress
 } from '@nextui-org/react';
 import { useWallet } from '~/use-cases/wallet/use-wallet';
 import type { WalletData } from '~/use-cases/wallet';
@@ -26,14 +27,25 @@ const routes = {
 };
 
 export function Header() {
+    const navigation = useNavigation();
     return (
-        <Navbar isBordered>
-            <MenuToggler />
-            <DefaultContent />
-            <MobileContent />
-            <Auth />
-            <Menu />
-        </Navbar>
+        <>
+            {navigation.state === 'loading' && (
+                <Progress
+                    aria-label="Loading navigation..."
+                    size="sm"
+                    className="w-full"
+                    isIndeterminate
+                />
+            )}
+            <Navbar isBordered>
+                <MenuToggler />
+                <DefaultContent />
+                <MobileContent />
+                <Auth />
+                <Menu />
+            </Navbar>
+        </>
     );
 }
 const NavBarItemWithLocationFeeback = ({
