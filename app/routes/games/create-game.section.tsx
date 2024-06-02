@@ -118,6 +118,10 @@ const ModalDefault = (
     useEffect(() => {
         if (fetcher.data?.ok) {
             toast.success('Created successfully!');
+            fetcher.submit(null, {
+                action: '/resource/game?reset=true',
+                method: 'POST'
+            });
             navigate({
                 pathname: '/games',
                 search: fetcher.data?.refetch ? '?refetch=true' : undefined
