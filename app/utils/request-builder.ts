@@ -96,7 +96,18 @@ class RequestBuilderSingleton {
         } catch (err: any) {
             logError(`Error on sent input-> ${err.message ?? String(err)}`);
 
-            throw { ok: false, error: err.message ?? err };
+            const isInternalError: boolean =
+                typeof err.message === 'string'
+                    ? err.message.toLowerCase().includes('internal error')
+                    : false;
+
+            if (isInternalError)
+                return {
+                    ok: false,
+                    error: 'Oops! An internal error occurred.'
+                };
+
+            return { ok: false, error: err.message ?? err };
         }
     }
 }
