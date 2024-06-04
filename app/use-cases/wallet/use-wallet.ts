@@ -27,7 +27,7 @@ type WalletDispatch = {
     disconnectWallet: (
         provider?: typeof window.ethereum,
         handler?: WalletDisconnectHandler
-    ) => Promise<void>;
+    ) => Promise<null>;
 };
 
 const initialData: WalletData = {
@@ -44,7 +44,7 @@ export function useWallet(
     }
 ): [WalletData, WalletDispatch] {
     const addressChangeListenerRef =
-        useRef<(accounts: string[]) => Promise<void>>();
+        useRef<(accounts: `0x${string}`[]) => Promise<void>>();
     const chainDisconnectListenerRef = useRef<(err: any) => Promise<void>>();
     const [data, setData] = useState<WalletData>(() =>
         defaultAddress
@@ -58,9 +58,9 @@ export function useWallet(
 
     const removeAddressChangeListener = (provider?: typeof window.ethereum) => {
         const providerFallback = provider ?? window.ethereum;
-        providerFallback.removeListener(
+        providerFallback!.removeListener(
             'accountsChanged',
-            addressChangeListenerRef.current
+            addressChangeListenerRef.current!
         );
         logger.logInfo('addressChangeListener removed ->');
     };
@@ -68,9 +68,9 @@ export function useWallet(
         provider?: typeof window.ethereum
     ) => {
         const providerFallback = provider ?? window.ethereum;
-        providerFallback.removeListener(
+        providerFallback!.removeListener(
             'disconnect',
-            chainDisconnectListenerRef.current
+            chainDisconnectListenerRef.current!
         );
         logger.logInfo('chainDisconnectListener removed ->');
     };
@@ -108,14 +108,14 @@ export function useWallet(
             });
         };
 
-        providerFallback
+        providerFallback!
             .request({ method: 'eth_accounts' })
             .then(addressChangeListenerRef.current)
             .catch((err: any) => {
                 //TODO impl better request account error handling
                 logger.logError(err.message ?? err.toString());
             });
-        providerFallback.on(
+        providerFallback!.on(
             'accountsChanged',
             addressChangeListenerRef.current
         );
@@ -128,7 +128,7 @@ export function useWallet(
                 `'chain disconnected ->', ${err.message ?? err.toString()}`
             );
         };
-        providerFallback.on('disconnect', chainDisconnectListenerRef.current);
+        providerFallback!.on('disconnect', chainDisconnectListenerRef.current);
     };
 
     const connectWallet: WalletDispatch['connectWallet'] = (
@@ -168,7 +168,7 @@ export function useWallet(
         setData(prev => ({ ...prev, status: 'pending' }));
         const providerFallback = provider ?? window.ethereum;
 
-        return providerFallback
+        return providerFallback!
             .request({
                 method: 'wallet_revokePermissions',
                 params: [
@@ -191,7 +191,7 @@ export function useWallet(
             setData(prev => ({ ...prev, status: 'pending' }));
             const provider = window.ethereum;
             provider
-                .request({
+                ?.request?.({
                     method: 'wallet_requestPermissions',
                     params: [
                         {
@@ -201,7 +201,7 @@ export function useWallet(
                         }
                     ]
                 })
-                .then(() => {
+                ?.then?.(() => {
                     logger.logInfo('Wallet auto-connected successfully ->');
                     connectWallet(defaultHandler, provider);
                 });
