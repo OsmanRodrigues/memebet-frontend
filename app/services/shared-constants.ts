@@ -1,4 +1,5 @@
-export const inspectBaseUrl = 'http://localhost:8080/inspect';
+export const baseUrl = 'http://localhost:8080';
+export const inspectBaseUrl = `${baseUrl}/inspect`;
 export const dappAddress = '0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e';
 export const advanceABI = {
     addValidationFunction: {
