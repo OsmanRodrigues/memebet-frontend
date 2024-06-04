@@ -7,7 +7,7 @@ export type RequestBuilderInitArgs = {
     abi: string[] | null;
     appAddress: Address | null;
     appEndpoint: string | null;
-    provider: typeof window.ethereum | null;
+    provider: typeof window.ethereum;
     signerAddress: string | null;
 };
 export type RequestBuilderResponse<Data = any, Error = any> = {
@@ -22,15 +22,15 @@ class RequestBuilderSingleton {
     private abi: RequestBuilderInitArgs['abi'] = null;
     private appAddress: RequestBuilderInitArgs['appAddress'] = null;
     private appEndpoint: RequestBuilderInitArgs['appEndpoint'] = null;
-    private provider: RequestBuilderInitArgs['provider'] = null;
+    private provider: RequestBuilderInitArgs['provider'];
     private signerAddress: RequestBuilderInitArgs['signerAddress'] = null;
 
     private _url: string | null = null;
 
     config(args: Partial<RequestBuilderInitArgs>, overwrite?: boolean) {
         (Object.keys(args) as (keyof typeof args)[]).forEach(prop => {
-            if (overwrite) this[prop] = args[prop];
-            else if (!this[prop]) this[prop] = args[prop];
+            if (overwrite) this[prop] = args[prop] as any;
+            else if (!this[prop]) this[prop] = args[prop] as any;
         });
 
         return this;
@@ -61,10 +61,28 @@ class RequestBuilderSingleton {
             return { ok: false, error: err.message ?? err };
         }
     }
-    async send<Result = any>(
+    async isTransactionSucceed(
+        txHash: string,
+        provider?: typeof this.provider
+    ) {
+        const providerFallback = provider ?? this.provider;
+        if (providerFallback?.isConnected?.()) {
+            try {
+                const providerRes = await providerFallback?.request?.({
+                    method: 'eth_getTransactionReceipt',
+                    params: [txHash as `0x${string}`]
+                });
+                return providerRes?.status === '0x1';
+            } catch (err: any) {
+                return { error: err.message ?? String(err) };
+            }
+        }
+        return null;
+    }
+    async send(
         actionName: string,
         args?: (string | number)[]
-    ): Promise<RequestBuilderResponse<Result>> {
+    ): Promise<RequestBuilderResponse<{ transactionHash: string }>> {
         try {
             if (
                 this.abi?.length &&
@@ -87,7 +105,7 @@ class RequestBuilderSingleton {
                     `Input sent successfully!-> transaction hash:${transactionHash}`
                 );
 
-                return { ok: true };
+                return { ok: true, data: { transactionHash } };
             } else {
                 throw new Error(
                     'At least one dapp address, one provider, one signer address and one abi must be provided.'

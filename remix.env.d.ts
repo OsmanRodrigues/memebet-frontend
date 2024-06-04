@@ -2,5 +2,5 @@
 /// <reference types="@remix-run/node" />
 
 interface Window {
-    ethereum: any;
+    ethereum?: import('viem').EIP1193Provider & { isConnected: () => boolean };
 }
