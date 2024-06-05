@@ -124,20 +124,20 @@ const TransactionsObserverContext = createContext<
 export const TransactionsObserverProvider = ({
     children
 }: PropsWithChildren) => {
-    const observer = useRef<TransactionsObserver>(
-        new TransactionsObserver(window.ethereum)
-    );
+    const observer = useRef<TransactionsObserver>();
 
     const notify = useCallback(
         (transactionHash: string, handler: SubscriptionHandler) => {
-            observer.current.subscribe(transactionHash, handler);
-            observer.current.startListen(transactionHash);
+            observer.current?.subscribe?.(transactionHash, handler);
+            observer.current?.startListen?.(transactionHash);
         },
         []
     );
 
     useEffect(() => {
-        return () => observer.current.unsubscribeAll();
+        //NOTE remix needs useeffect to interprets these hook uses the "window" browser API
+        observer.current = new TransactionsObserver(window.ethereum);
+        return () => observer.current?.unsubscribeAll?.();
     }, []);
 
     const value = useMemo(() => ({ notify }), []);
