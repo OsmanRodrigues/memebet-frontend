@@ -6,6 +6,7 @@ import {
 } from '@remix-run/react';
 import { ErrorFallback } from '~/components/error-fallback';
 import * as gamesUseCase from '~/use-cases/games/functions';
+import { GameInfosSection } from './game-infos.section';
 
 export async function loader({ params }: LoaderFunctionArgs) {
     if (params.id) {
@@ -22,8 +23,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Game() {
     const loaderData = useLoaderData<gamesUseCase.GetGameByIdResponse>();
-    console.log('loaderData ->', loaderData);
-    return <p>Game selected: {loaderData.game?.id}</p>;
+
+    return (
+        <>
+            <GameInfosSection {...loaderData.game!} />
+        </>
+    );
 }
 
 export function ErrorBoundary() {
