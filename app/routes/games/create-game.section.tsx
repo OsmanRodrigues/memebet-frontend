@@ -17,6 +17,7 @@ import {
     useDisclosure
 } from '@nextui-org/react';
 import { SectionWrapper } from '~/components/wrapper/section';
+import { useTransactionsObserver } from '~/utils/transactions-observer';
 import toast from 'react-hot-toast';
 
 import type {
@@ -109,6 +110,7 @@ const ModalDefault = (
         'isOpen' | 'onOpenChange' | 'children' | 'title'
     > & { fetcherKey: string }
 ) => {
+    const transactionsObserver = useTransactionsObserver();
     const fetcher = useFetcher<any>({
         key: props.fetcherKey
     });
@@ -117,7 +119,17 @@ const ModalDefault = (
 
     useEffect(() => {
         if (fetcher.data?.ok) {
-            toast.success('Created successfully!');
+            transactionsObserver?.notify?.(
+                fetcher.data.data.transactionHash,
+                async () => {
+                    toast.success(
+                        props.fetcherKey === CreateFunctionFetcherKey
+                            ? 'Function created successfully!'
+                            : 'Game created successfully!'
+                    );
+                }
+            );
+            toast.success('Creation request sent!');
             fetcher.submit(null, {
                 action: '/resource/game?reset=true',
                 method: 'POST'
