@@ -15,6 +15,7 @@ import { Toaster } from 'react-hot-toast';
 import { Header } from './components/header';
 import { MainWrapper } from './components/wrapper/main';
 import { ErrorFallback } from './components/error-fallback';
+import { TransactionsObserverProvider } from './utils/transactions-observer';
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
@@ -46,7 +47,11 @@ export function Layout({ children }: PropsWithChildren) {
                         position="bottom-center"
                         toastOptions={{ duration: 4000 }}
                     />
-                    <MainWrapper>{children}</MainWrapper>
+                    <MainWrapper>
+                        <TransactionsObserverProvider>
+                            {children}
+                        </TransactionsObserverProvider>
+                    </MainWrapper>
                     <ScrollRestoration />
                     <Scripts />
                 </NextUIProvider>
