@@ -61,24 +61,6 @@ class RequestBuilderSingleton {
             return { ok: false, error: err.message ?? err };
         }
     }
-    async isTransactionSucceed(
-        txHash: string,
-        provider?: typeof this.provider
-    ) {
-        const providerFallback = provider ?? this.provider;
-        if (providerFallback?.isConnected?.()) {
-            try {
-                const providerRes = await providerFallback?.request?.({
-                    method: 'eth_getTransactionReceipt',
-                    params: [txHash as `0x${string}`]
-                });
-                return providerRes?.status === '0x1';
-            } catch (err: any) {
-                return { error: err.message ?? String(err) };
-            }
-        }
-        return null;
-    }
     async send(
         actionName: string,
         args?: (string | number)[]
