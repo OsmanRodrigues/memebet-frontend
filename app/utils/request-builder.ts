@@ -43,7 +43,7 @@ class RequestBuilderSingleton {
 
     async inspect<Result = any>(
         url?: string
-    ): Promise<RequestBuilderResponse<Result>> {
+    ): Promise<RequestBuilderResponse<Result | string>> {
         try {
             const urlFallback = url ?? this._url;
 
@@ -52,9 +52,10 @@ class RequestBuilderSingleton {
             const res = await fetch(urlFallback, { method: 'GET' });
             const resJSON = await res.json();
             const hexPayload = resJSON?.reports[0]?.payload;
-            const payload = hexPayload
-                ? JSON.parse(transformHexToUTF8(hexPayload))
-                : {};
+            const utf8Payload = transformHexToUTF8(hexPayload);
+            const payload = utf8Payload.startsWith('{')
+                ? JSON.parse(utf8Payload)
+                : utf8Payload;
 
             return { ok: true, data: payload };
         } catch (err: any) {
