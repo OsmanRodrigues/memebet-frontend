@@ -36,10 +36,18 @@ export const getGameById = async (
         return {
             message: `Oops! An error occurred on get game "${gameId}".`,
             error: gamesServiceRes.error,
-            status: 404
+            status: 400
         };
     } else if (typeof gamesServiceRes.data === 'string')
-        return { message: gamesServiceRes.data };
+        return {
+            message: gamesServiceRes.data,
+            ...(gamesServiceRes.data.toLowerCase().includes('not found')
+                ? {
+                      status: 404,
+                      error: gamesServiceRes.data
+                  }
+                : null)
+        };
     else if (gamesServiceRes.data) return { game: gamesServiceRes.data };
 
     return {};
