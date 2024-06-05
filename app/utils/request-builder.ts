@@ -49,14 +49,19 @@ class RequestBuilderSingleton {
             const urlFallback = url ?? this._url;
 
             if (!urlFallback) throw new Error('An url must be provided.');
-
+            const parsePayload = (hexPayload: string) => {
+                const utf8Payload = transformHexToUTF8(hexPayload);
+                try {
+                    const jsonPayload = JSON.parse(utf8Payload);
+                    return jsonPayload;
+                } catch (err) {
+                    return utf8Payload;
+                }
+            };
             const res = await fetch(urlFallback, { method: 'GET' });
             const resJSON = await res.json();
             const hexPayload = resJSON?.reports[0]?.payload;
-            const utf8Payload = transformHexToUTF8(hexPayload);
-            const payload = utf8Payload.startsWith('{')
-                ? JSON.parse(utf8Payload)
-                : utf8Payload;
+            const payload = parsePayload(hexPayload);
 
             return {
                 ok: true,
