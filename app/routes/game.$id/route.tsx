@@ -1,7 +1,39 @@
-import { useParams } from '@remix-run/react';
+import { type LoaderFunctionArgs, json } from '@remix-run/node';
+import {
+    isRouteErrorResponse,
+    useLoaderData,
+    useRouteError
+} from '@remix-run/react';
+import { ErrorFallback } from '~/components/error-fallback';
+import * as gamesUseCase from '~/use-cases/games/functions';
+
+export async function loader({ params }: LoaderFunctionArgs) {
+    if (params.id) {
+        const useCaseRes = await gamesUseCase.getGameById(params.id);
+
+        if (useCaseRes.status === 404)
+            throw new Response(useCaseRes.error, {
+                status: useCaseRes.status
+            });
+
+        return json(useCaseRes);
+    }
+}
 
 export default function Game() {
-    const param = useParams();
-    console.log('param ->', param);
-    return <p>Game selected: {param.id}</p>;
+    const loaderData = useLoaderData<gamesUseCase.GetGameByIdResponse>();
+    console.log('loaderData ->', loaderData);
+    return <p>Game selected: {loaderData.game?.id}</p>;
+}
+
+export function ErrorBoundary() {
+    const error = useRouteError() as any;
+
+    return (
+        <ErrorFallback
+            title="Game Page Error"
+            error={error}
+            isRouteError={isRouteErrorResponse(error)}
+        />
+    );
 }
