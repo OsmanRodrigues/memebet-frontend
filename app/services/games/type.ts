@@ -10,7 +10,7 @@ export type GameLinkedWallet = {
 export type Game = {
     id: number;
     picks: [string, string];
-    currentOdds: unknown;
+    currentOdds: [string, string][];
     playerIds: string[];
     playersBets: unknown;
     fees: number;
