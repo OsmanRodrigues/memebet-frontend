@@ -21,10 +21,10 @@ type GamesUseCaseBaseResponse = {
     status?: number;
 };
 export type GetGameByIdResponse = GamesUseCaseBaseResponse & {
-    game?: GameListViewModel;
+    game?: GameViewModel;
 };
 export type GetGamesListResponse = GamesUseCaseBaseResponse & {
-    gamesList?: GameViewModel[];
+    gamesList?: GameListViewModel[];
 };
 
 export const getGameById = async (
@@ -38,10 +38,10 @@ export const getGameById = async (
             error: gamesServiceRes.error,
             status: 400
         };
-    } else if (typeof gamesServiceRes.data === 'string')
+    } else if (gamesServiceRes.message)
         return {
-            message: gamesServiceRes.data,
-            ...(gamesServiceRes.data.toLowerCase().includes('not found')
+            message: gamesServiceRes.message,
+            ...(gamesServiceRes.message.toLowerCase().includes('not found')
                 ? {
                       status: 404,
                       error: gamesServiceRes.data
@@ -65,8 +65,7 @@ export const getGamesList = async (): Promise<GetGamesListResponse> => {
         return {
             gamesList: gamesServiceRes.data
         };
-    else if (typeof gamesServiceRes.data === 'string')
-        return { message: gamesServiceRes.data };
+    else if (gamesServiceRes.message) return gamesServiceRes;
 
     return {};
 };

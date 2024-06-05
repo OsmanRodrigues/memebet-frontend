@@ -14,6 +14,7 @@ export type RequestBuilderResponse<Data = any, Error = any> = {
     ok: boolean;
     error?: Error;
     data?: Data;
+    message?: string;
 };
 
 class RequestBuilderSingleton {
@@ -43,7 +44,7 @@ class RequestBuilderSingleton {
 
     async inspect<Result = any>(
         url?: string
-    ): Promise<RequestBuilderResponse<Result | string>> {
+    ): Promise<RequestBuilderResponse<Result>> {
         try {
             const urlFallback = url ?? this._url;
 
@@ -57,7 +58,12 @@ class RequestBuilderSingleton {
                 ? JSON.parse(utf8Payload)
                 : utf8Payload;
 
-            return { ok: true, data: payload };
+            return {
+                ok: true,
+                ...(typeof payload === 'string'
+                    ? { message: payload }
+                    : { data: payload })
+            };
         } catch (err: any) {
             return { ok: false, error: err.message ?? err };
         }
