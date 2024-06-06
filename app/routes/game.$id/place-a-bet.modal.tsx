@@ -22,7 +22,7 @@ const mapPicksOptions = (
     picks?: [string, string]
 ): { key: string; label: string }[] =>
     !picks ? [] : picks.map(pick => ({ key: pick, label: pick }));
-
+//TODO validate if user is loggeding before act
 export const PlaceABetModal = (props: PlaceABetModalProps) => {
     const loaderData = useLoaderData<GetGameByIdResponse>();
     const fetcher = useFetcher<any>({ key: PlaceABetModalFetcherKey });
