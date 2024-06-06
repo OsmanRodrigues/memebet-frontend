@@ -35,6 +35,12 @@ export const GameInfosSection = (
         else if (balance < 1) toast.error('Insufficient funds!');
         else placeABetModal.onOpen();
     }, [ethBalance]);
+    const onPlaceABetSuccess = () => {
+        fetcher.submit(null, {
+            action: '/resource/auth',
+            method: 'GET'
+        });
+    };
 
     return (
         <SectionWrapper isFirstOfPage>
@@ -79,6 +85,7 @@ export const GameInfosSection = (
             <PlaceABetModal
                 isOpen={placeABetModal.isOpen}
                 onOpenChange={placeABetModal.onOpenChange}
+                onSuccess={onPlaceABetSuccess}
                 balance={balance}
                 {...props}
             />
