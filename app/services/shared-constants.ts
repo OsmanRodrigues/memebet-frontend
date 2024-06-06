@@ -9,6 +9,10 @@ export const advanceABI = {
     createGame: {
         name: 'createGame',
         abi: 'function createGame(bytes32 home, bytes32 away, address token , uint256 start, uint256 end, bytes32 validatorFunctionName)'
+    },
+    placeBet: {
+        name: 'placeBet',
+        abi: 'function placeBet(bytes32 gameid, bytes32 pick, address token, uint256 amount)'
     }
 };
 export const advanceABIMap = Object.values(advanceABI).map(

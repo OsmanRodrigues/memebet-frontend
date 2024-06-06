@@ -1,3 +1,5 @@
+import type { RequestBuilderInitArgs } from '~/utils/request-builder';
+
 //TODO better typing 'unknown' typed properties below
 export type GameLinkedWallet = {
     [key: string]: {
@@ -34,4 +36,13 @@ export type Game = {
         wallets: GameLinkedWallet;
     };
     tokenAddress?: string;
+};
+export type PlaceABetArgs = Pick<
+    RequestBuilderInitArgs,
+    'provider' | 'signerAddress'
+> & {
+    gameId: string;
+    pick: string;
+    token: string;
+    amount: number;
 };
