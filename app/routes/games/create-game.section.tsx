@@ -127,16 +127,17 @@ const ModalDefault = (
                             ? 'Function created successfully!'
                             : 'Game created successfully!'
                     );
+                    if (fetcher.data?.refetch)
+                        navigate({
+                            pathname: '/games',
+                            search: '?refetch=true'
+                        });
                 }
             );
             toast.success('Creation request sent!');
             fetcher.submit(null, {
                 action: '/resource/game?reset=true',
                 method: 'POST'
-            });
-            navigate({
-                pathname: '/games',
-                search: fetcher.data?.refetch ? '?refetch=true' : undefined
             });
             props.onOpenChange?.(false);
         } else if (fetcher.data?.error) toast.error(fetcher.data.error);

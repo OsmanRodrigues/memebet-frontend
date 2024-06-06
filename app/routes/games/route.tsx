@@ -9,7 +9,7 @@ import { AuthFetcherKey } from '~/components/header';
 import { ErrorFallback } from '~/components/error-fallback';
 import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
-import { timer, logInfo } from '~/utils';
+import { logInfo } from '~/utils';
 
 import type { WalletData } from '~/use-cases/wallet';
 import type { LoaderFunctionArgs } from '@remix-run/node';
@@ -18,8 +18,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const query = new URL(request.url).searchParams;
 
     if (query.has('refetch')) {
-        await timer(2000);
         logInfo(`refetching games list...`);
+        const gamesListRes = await gamesUseCase.getGamesList();
+
+        return new Response(JSON.stringify(gamesListRes), {
+            status: 307,
+            headers: {
+                Location: '/games'
+            }
+        });
     }
 
     const gamesListRes = await gamesUseCase.getGamesList();
