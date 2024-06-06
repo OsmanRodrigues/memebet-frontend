@@ -7,7 +7,7 @@ import { textShortener, getDateStr } from '~/utils';
 import type {
     GameListViewModel,
     GetGamesListResponse
-} from '~/use-cases/games/functions';
+} from '~/use-cases/games/type';
 import type { SectionWrapperProps } from '~/components/wrapper/section';
 
 const tableColumns = getColumns({
