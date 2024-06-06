@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { useFetcher } from '@remix-run/react';
 import {
     Button,
     Card,
@@ -8,15 +10,32 @@ import {
 } from '@nextui-org/react';
 import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
+import { AuthFetcherKey } from '~/components/header';
 import { getDateStr } from '~/utils/date';
 import { PlaceABetModal } from './place-a-bet.modal';
+import toast from 'react-hot-toast';
 
 import type { GameViewModel } from '~/use-cases/games/type';
+import type { WalletData } from '~/use-cases/wallet/functions';
 
 export const GameInfosSection = (
     props: Omit<GameViewModel, 'currentOdds' | 'playerIds'>
 ) => {
+    const fetcher = useFetcher<Partial<WalletData>>({
+        key: AuthFetcherKey
+    });
     const placeABetModal = useDisclosure();
+    const ethBalance = fetcher.data?.ethBalance ?? '';
+    const balance = ethBalance?.includes('wei')
+        ? Number(ethBalance.split('wei')[1].trim())
+        : 0;
+
+    const onClickToPlaceABet = useCallback(() => {
+        if (!fetcher.data?.address)
+            toast.error('You must be logged-in to place a bet!');
+        else if (balance < 1) toast.error('Insufficient funds!');
+        else placeABetModal.onOpen();
+    }, [ethBalance]);
 
     return (
         <SectionWrapper isFirstOfPage>
@@ -53,7 +72,7 @@ export const GameInfosSection = (
                     />
                 </CardBody>
                 <CardFooter className="flex justify-end">
-                    <Button color="secondary" onClick={placeABetModal.onOpen}>
+                    <Button color="secondary" onClick={onClickToPlaceABet}>
                         Place a bet
                     </Button>
                 </CardFooter>
@@ -61,6 +80,8 @@ export const GameInfosSection = (
             <PlaceABetModal
                 isOpen={placeABetModal.isOpen}
                 onOpenChange={placeABetModal.onOpenChange}
+                balance={balance}
+                {...props}
             />
         </SectionWrapper>
     );
