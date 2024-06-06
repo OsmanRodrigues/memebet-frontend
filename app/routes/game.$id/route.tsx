@@ -6,13 +6,28 @@ import {
 } from '@remix-run/react';
 import { ErrorFallback } from '~/components/error-fallback';
 import * as gamesUseCase from '~/use-cases/games/functions.server';
+import { logInfo } from '~/utils/logger';
 import { GameInfosSection } from './game-infos.section';
 import { BettingFlowSection } from './betting-flow.section';
 
 import type { GetGameByIdResponse } from '~/use-cases/games/type';
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
     if (params.id) {
+        const query = new URL(request.url).searchParams;
+
+        if (query.has('refetch')) {
+            logInfo(`refetching game ${params.id}...`);
+            const useCaseRes = await gamesUseCase.getGameById(params.id);
+
+            return new Response(JSON.stringify(useCaseRes), {
+                status: 307,
+                headers: {
+                    Location: `/game/${params.id}`
+                }
+            });
+        }
+
         const useCaseRes = await gamesUseCase.getGameById(params.id);
 
         if (useCaseRes.status === 404)

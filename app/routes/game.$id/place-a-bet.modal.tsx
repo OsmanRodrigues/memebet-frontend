@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import { useFetcher, useNavigate } from '@remix-run/react';
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import { ActionModal } from '~/components/portal/action-modal';
 import { useTransactionsObserver } from '~/utils/transactions-observer';
@@ -15,6 +15,7 @@ import type {
 type PlaceABetModalProps = Pick<ActionModalProps, 'isOpen' | 'onOpenChange'> &
     Pick<GameViewModel, 'id' | 'picks' | 'tokenAddress'> & {
         balance: number;
+        onSuccess?: () => void;
     };
 
 const PlaceABetModalFetcherKey = 'place-a-bet-fetcher';
@@ -34,6 +35,7 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
     const fetcher = useFetcher<PlaceABetResponse>({
         key: PlaceABetModalFetcherKey
     });
+    const navigate = useNavigate();
     const transactionsObserver = useTransactionsObserver();
 
     useEffect(() => {
@@ -42,6 +44,11 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
                 fetcher.data.transactionHash!,
                 async () => {
                     toast.success('Bet placed successfully!');
+                    navigate({
+                        pathname: `/game/${props.id}`,
+                        search: '?refetch=true'
+                    });
+                    props.onSuccess?.();
                 }
             );
             fetcher.submit(null, {
