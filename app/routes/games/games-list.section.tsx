@@ -1,7 +1,7 @@
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { Heading } from '~/components/typography/heading';
-import { Table, TableCell, TableRow } from '~/components/table';
+import { Table, TableCell, TableRow, getColumns } from '~/components/table';
 import { textShortener, getDateStr } from '~/utils';
 
 import type {
@@ -10,17 +10,13 @@ import type {
 } from '~/use-cases/games/functions';
 import type { SectionWrapperProps } from '~/components/wrapper/section';
 
-const gameTableColumnKey = {
+const tableColumns = getColumns({
     picks: 'picks',
     start: 'start',
     end: 'end',
     token: 'token',
     funds: 'funds'
-};
-const tableColumns = Object.keys(gameTableColumnKey).map(key => ({
-    key,
-    label: key.toUpperCase()
-}));
+});
 
 export type GamesListSectionProps = Pick<SectionWrapperProps, 'isFirstOfPage'>;
 
@@ -41,10 +37,7 @@ export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
                 {(item: GameListViewModel) => (
                     <TableRow key={item.id}>
                         {columnKey => {
-                            const typedColumnKey =
-                                columnKey as keyof typeof gameTableColumnKey;
-
-                            switch (typedColumnKey) {
+                            switch (columnKey) {
                                 case 'picks':
                                     return (
                                         <TableCell>
@@ -79,6 +72,8 @@ export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
                                             {item.betPool.fundsLocked}
                                         </TableCell>
                                     );
+                                default:
+                                    return <TableCell>empty</TableCell>;
                             }
                         }}
                     </TableRow>
