@@ -1,8 +1,17 @@
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import {
+    Table,
+    TableCell,
+    TableRow,
+    getColumns,
+    mapStrongKey
+} from '~/components/table';
 import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
 
 import type { GameViewModel } from '~/use-cases/games/functions';
+
+const tableColumns = getColumns({ 'current bettors': 'current bettors' });
 
 export const BettingFlowSection = (
     props: Pick<GameViewModel, 'currentOdds' | 'playerIds'>
@@ -28,7 +37,23 @@ export const BettingFlowSection = (
                         <span> {pick2[0]}</span>
                     </div>
                 </CardHeader>
-                <CardBody></CardBody>
+                <CardBody>
+                    <Table
+                        aria-label="Available games list"
+                        columns={tableColumns}
+                        items={mapStrongKey(props.playerIds)}
+                        emptyContent={'No current bettors.'}
+                        autoSize={props.playerIds?.length < 15}
+                    >
+                        {item => {
+                            return (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.content}</TableCell>
+                                </TableRow>
+                            );
+                        }}
+                    </Table>
+                </CardBody>
             </Card>
         </SectionWrapper>
     );
