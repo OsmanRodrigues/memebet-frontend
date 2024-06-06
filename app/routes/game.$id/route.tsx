@@ -7,6 +7,7 @@ import {
 import { ErrorFallback } from '~/components/error-fallback';
 import * as gamesUseCase from '~/use-cases/games/functions';
 import { GameInfosSection } from './game-infos.section';
+import { BettingFlowSection } from './betting-flow.section';
 
 export async function loader({ params }: LoaderFunctionArgs) {
     if (params.id) {
@@ -27,6 +28,7 @@ export default function Game() {
     return (
         <>
             <GameInfosSection {...loaderData.game!} />
+            <BettingFlowSection {...loaderData.game!} />
         </>
     );
 }
