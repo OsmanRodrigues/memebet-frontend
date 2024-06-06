@@ -1,4 +1,5 @@
 import { extendVariants } from '@nextui-org/react';
+import { useEffect, useState } from 'react';
 
 type HeadingVariants = {
     as: 'h1' | 'h2' | 'h3' | 'h4';
@@ -9,10 +10,22 @@ type HeadingProps = Partial<HeadingVariants> & {
     className?: string;
 };
 
-const HeadingBaseComponent = ({ children, as, ...props }: HeadingProps) => {
-    const HeadingTag = as ?? 'h2';
+const HeadingBaseComponent = ({ children, ...props }: HeadingProps) => {
+    const [variant, setVariant] = useState<
+        Required<Pick<HeadingProps, 'as' | 'className'>>
+    >({
+        className: '',
+        as: 'h2'
+    });
 
-    return <HeadingTag className={props.className}>{children}</HeadingTag>;
+    useEffect(() => {
+        setVariant(prev => ({
+            as: props.as ?? prev.as,
+            className: props.className ?? prev.className
+        }));
+    }, [props.as, props.className]);
+
+    return <variant.as className={variant.className}>{children}</variant.as>;
 };
 
 export const Heading = extendVariants(HeadingBaseComponent, {
