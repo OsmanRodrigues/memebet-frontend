@@ -7,16 +7,12 @@ import {
     CardHeader,
     DateInput,
     Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
     ModalProps,
     Textarea,
     useDisclosure
 } from '@nextui-org/react';
 import { SectionWrapper } from '~/components/wrapper/section';
+import { ActionModal } from '~/components/portal/action-modal';
 import { useTransactionsObserver } from '~/utils/transactions-observer';
 import toast from 'react-hot-toast';
 
@@ -144,46 +140,20 @@ const ModalDefault = (
     }, [fetcher.data]);
 
     return (
-        <Modal
+        <ActionModal
+            title={props.title}
             isOpen={props.isOpen}
             onOpenChange={props.onOpenChange}
-            placement="top-center"
-            backdrop="blur"
-            isDismissable={isPending}
+            action="/resource/game"
+            method="POST"
+            fetcherForm={fetcher.Form}
+            isPending={isPending}
+            actionLabel={
+                fetcher.state === 'submitting' ? 'Creating...' : 'Create'
+            }
         >
-            <ModalContent>
-                {onClose => (
-                    <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            {props.title}
-                        </ModalHeader>
-                        <fetcher.Form method="POST" action="/resource/game">
-                            <ModalBody>{props.children}</ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    color="default"
-                                    variant="flat"
-                                    onPress={onClose}
-                                    isDisabled={isPending}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    color={isPending ? 'danger' : 'secondary'}
-                                    type="submit"
-                                    isDisabled={isPending}
-                                    isLoading={isPending}
-                                >
-                                    {fetcher.state === 'submitting'
-                                        ? 'Creating...'
-                                        : 'Create'}
-                                </Button>
-                            </ModalFooter>
-                        </fetcher.Form>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+            {props.children}
+        </ActionModal>
     );
 };
 const CreateFunctionModal = (
