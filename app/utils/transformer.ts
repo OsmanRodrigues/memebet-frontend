@@ -11,3 +11,13 @@ export const textShortener = (text: string, maxSize = 8): string => {
 
     return `${text.slice(0, maxSize - offsetSize)}...${text.slice(-offsetSize)}`;
 };
+export const transformBalanceStrIntoNum = (balanceStr?: string): number => {
+    if (balanceStr?.includes?.('wei')) {
+        const balanceStrSplit = balanceStr.split('wei');
+        const validBalanceStr =
+            balanceStrSplit[0].trim() ?? balanceStrSplit[1].trim();
+
+        return Number(validBalanceStr);
+    }
+    return 0;
+};
