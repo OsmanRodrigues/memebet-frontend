@@ -1,5 +1,4 @@
-import { extendVariants } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { tv } from 'tailwind-variants';
 
 type HeadingVariants = {
     as: 'h1' | 'h2' | 'h3' | 'h4';
@@ -10,25 +9,13 @@ type HeadingProps = Partial<HeadingVariants> & {
     className?: string;
 };
 
-const HeadingBaseComponent = ({ children, ...props }: HeadingProps) => {
-    const [variant, setVariant] = useState<
-        Required<Pick<HeadingProps, 'as' | 'className'>>
-    >({
-        className: '',
-        as: 'h2'
-    });
+export const Heading = ({ children, ...props }: HeadingProps) => {
+    const Tag = props.as ?? 'h2';
 
-    useEffect(() => {
-        setVariant(prev => ({
-            as: props.as ?? prev.as,
-            className: props.className ?? prev.className
-        }));
-    }, [props.as, props.className]);
-
-    return <variant.as className={variant.className}>{children}</variant.as>;
+    return <Tag className={headingVariants(props)}>{children}</Tag>;
 };
 
-export const Heading = extendVariants(HeadingBaseComponent, {
+const headingVariants = tv({
     variants: {
         as: {
             h1: 'py-4 font-bold text-4xl',
