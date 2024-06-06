@@ -1,32 +1,6 @@
 import * as gamesService from '~/services/games/service';
-import type { Game } from '~/services/games/type';
 
-export type GameListViewModel = Pick<
-    Game,
-    'id' | 'picks' | 'startTime' | 'endTime' | 'betPool'
->;
-export type GameViewModel = Pick<
-    Game,
-    | 'id'
-    | 'picks'
-    | 'startTime'
-    | 'endTime'
-    | 'fees'
-    | 'playerIds'
-    | 'currentOdds'
-    | 'tokenAddress'
->;
-type GamesUseCaseBaseResponse = {
-    message?: string;
-    error?: any;
-    status?: number;
-};
-export type GetGameByIdResponse = GamesUseCaseBaseResponse & {
-    game?: GameViewModel;
-};
-export type GetGamesListResponse = GamesUseCaseBaseResponse & {
-    gamesList?: GameListViewModel[];
-};
+import type { GetGameByIdResponse, GetGamesListResponse } from './type';
 
 export const getGameById = async (
     gameId: string
