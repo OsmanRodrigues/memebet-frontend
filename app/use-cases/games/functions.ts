@@ -14,6 +14,7 @@ export type GameViewModel = Pick<
     | 'fees'
     | 'playerIds'
     | 'currentOdds'
+    | 'tokenAddress'
 >;
 type GamesUseCaseBaseResponse = {
     message?: string;

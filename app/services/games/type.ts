@@ -33,4 +33,5 @@ export type Game = {
     wallet: {
         wallets: GameLinkedWallet;
     };
+    tokenAddress?: string;
 };
