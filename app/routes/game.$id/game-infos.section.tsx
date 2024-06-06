@@ -9,7 +9,7 @@ import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { getDateStr } from '~/utils/date';
 
-import type { GameViewModel } from '~/use-cases/games/functions';
+import type { GameViewModel } from '~/use-cases/games/type';
 
 // 1. id
 // 2. picks

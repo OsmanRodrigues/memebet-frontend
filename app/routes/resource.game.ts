@@ -1,7 +1,9 @@
 import { json } from '@remix-run/node';
 import * as governanceUseCase from '~/use-cases/governance/functions.server';
 import * as governanceUseCaseClient from '~/use-cases/governance/functions.client';
+import * as gameUseCaseCliente from '~/use-cases/games/functions.client';
 import { HttpStatus } from '~/utils/http';
+
 import type { ActionFunctionArgs } from '@remix-run/node';
 import type { ClientActionFunctionArgs } from '@remix-run/react';
 import type { PreActionResponse } from '~/use-cases/governance/type';
@@ -25,9 +27,15 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
     if (serverRes.status === HttpStatus.ResetContent) return {};
 
     const { formData, wallet } = serverRes;
-    const { functionName, functionCode, ...leftovers } = formData;
+    const {
+        functionName,
+        functionCode,
+        gameId,
+        validatorFunctionName,
+        ...leftovers
+    } = formData;
 
-    if (functionName && functionCode) {
+    if (wallet.isDAOMember && functionName && functionCode) {
         return await governanceUseCaseClient.handleSubmitCreateValidationFunction(
             {
                 provider: window.ethereum,
@@ -36,14 +44,22 @@ export async function clientAction({ serverAction }: ClientActionFunctionArgs) {
                 functionCode
             }
         );
-    } else {
+    } else if (wallet.isDAOMember && validatorFunctionName) {
         return {
             ...(await governanceUseCaseClient.handleSubmitCreateGame({
                 provider: window.ethereum,
                 signerAddress: wallet.address!,
+                validatorFunctionName,
                 ...leftovers
             })),
             refetch: true
         };
+    } else if (gameId) {
+        return await gameUseCaseCliente.submitPlaceABet({
+            provider: window.ethereum,
+            signerAddress: wallet.address!,
+            gameId,
+            ...leftovers
+        });
     }
 }

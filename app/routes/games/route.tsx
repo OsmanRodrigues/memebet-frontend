@@ -4,12 +4,12 @@ import {
     useRouteError
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import * as gamesUseCase from '~/use-cases/games/functions';
+import * as gamesUseCase from '~/use-cases/games/functions.server';
 import { AuthFetcherKey } from '~/components/header';
 import { ErrorFallback } from '~/components/error-fallback';
 import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
-import { logInfo } from '~/utils';
+import { logInfo } from '~/utils/logger';
 
 import type { WalletData } from '~/use-cases/wallet';
 import type { LoaderFunctionArgs } from '@remix-run/node';
