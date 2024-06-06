@@ -3,26 +3,21 @@ import {
     Card,
     CardBody,
     CardFooter,
-    CardHeader
+    CardHeader,
+    useDisclosure
 } from '@nextui-org/react';
 import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { getDateStr } from '~/utils/date';
+import { PlaceABetModal } from './place-a-bet.modal';
 
 import type { GameViewModel } from '~/use-cases/games/type';
-
-// 1. id
-// 2. picks
-// 3. startTime
-// 4. endTime
-// 5. fees
-// 6. cta
-// 7. playerIds
-// ? currentOdds
 
 export const GameInfosSection = (
     props: Omit<GameViewModel, 'currentOdds' | 'playerIds'>
 ) => {
+    const placeABetModal = useDisclosure();
+
     return (
         <SectionWrapper isFirstOfPage>
             <Heading>Game infos</Heading>
@@ -58,9 +53,15 @@ export const GameInfosSection = (
                     />
                 </CardBody>
                 <CardFooter className="flex justify-end">
-                    <Button color="secondary">Place a bet</Button>
+                    <Button color="secondary" onClick={placeABetModal.onOpen}>
+                        Place a bet
+                    </Button>
                 </CardFooter>
             </Card>
+            <PlaceABetModal
+                isOpen={placeABetModal.isOpen}
+                onOpenChange={placeABetModal.onOpenChange}
+            />
         </SectionWrapper>
     );
 };
