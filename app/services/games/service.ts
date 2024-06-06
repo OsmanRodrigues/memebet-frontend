@@ -23,5 +23,5 @@ export const placeABet = ({
             transformUTF8toHex(gameId),
             transformUTF8toHex(pick),
             token,
-            amount
+            +amount
         ]);
