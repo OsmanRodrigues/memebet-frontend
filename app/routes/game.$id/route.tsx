@@ -5,9 +5,11 @@ import {
     useRouteError
 } from '@remix-run/react';
 import { ErrorFallback } from '~/components/error-fallback';
-import * as gamesUseCase from '~/use-cases/games/functions';
+import * as gamesUseCase from '~/use-cases/games/functions.server';
 import { GameInfosSection } from './game-infos.section';
 import { BettingFlowSection } from './betting-flow.section';
+
+import type { GetGameByIdResponse } from '~/use-cases/games/type';
 
 export async function loader({ params }: LoaderFunctionArgs) {
     if (params.id) {
@@ -23,7 +25,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function Game() {
-    const loaderData = useLoaderData<gamesUseCase.GetGameByIdResponse>();
+    const loaderData = useLoaderData<GetGameByIdResponse>();
 
     return (
         <>

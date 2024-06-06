@@ -9,7 +9,7 @@ import {
 import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
 
-import type { GameViewModel } from '~/use-cases/games/functions';
+import type { GameViewModel } from '~/use-cases/games/type';
 
 const tableColumns = getColumns({ 'current bettors': 'current bettors' });
 
