@@ -12,6 +12,7 @@ import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
 import { AuthFetcherKey } from '~/components/header';
 import { getDateStr } from '~/utils/date';
+import { transformBalanceStrIntoNum } from '~/utils/transformer';
 import { PlaceABetModal } from './place-a-bet.modal';
 import toast from 'react-hot-toast';
 
@@ -26,9 +27,7 @@ export const GameInfosSection = (
     });
     const placeABetModal = useDisclosure();
     const ethBalance = fetcher.data?.ethBalance ?? '';
-    const balance = ethBalance?.includes('wei')
-        ? Number(ethBalance.split('wei')[1].trim())
-        : 0;
+    const balance = transformBalanceStrIntoNum(ethBalance);
 
     const onClickToPlaceABet = useCallback(() => {
         if (!fetcher.data?.address)
