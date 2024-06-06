@@ -49,6 +49,10 @@ export const GameInfosSection = (
                         display={getDateStr(props.endTime)}
                     />
                     <DataDisplay
+                        title="Token address"
+                        display={props.tokenAddress}
+                    />
+                    <DataDisplay
                         title="DAO fee"
                         display={`${props.fees.toFixed(2)}%`}
                     />
