@@ -11,7 +11,7 @@ import type { Fetcher } from '@remix-run/react';
 import type { ModalProps } from '@nextui-org/react';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 
-type ActionModalProps = Pick<
+export type ActionModalProps = Pick<
     ModalProps,
     'isOpen' | 'onOpenChange' | 'children'
 > & {
