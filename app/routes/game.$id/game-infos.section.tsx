@@ -20,16 +20,19 @@ import type { GameViewModel } from '~/use-cases/games/functions';
 // 7. playerIds
 // ? currentOdds
 
-export const GameInfosSection = (props: GameViewModel) => {
+export const GameInfosSection = (
+    props: Omit<GameViewModel, 'currentOdds' | 'playerIds'>
+) => {
     return (
         <SectionWrapper isFirstOfPage>
-            <Heading>{`Game ${props.id}`}</Heading>
+            <Heading>Game infos</Heading>
             <Card
                 isBlurred
                 className="border-none bg-background/60 dark:bg-default-100/50 max-w-[610px]"
                 shadow="sm"
             >
-                <CardHeader className="justify-end">
+                <CardHeader className="justify-between">
+                    <Heading as="h3">{`Game ${props.id}`}</Heading>
                     <Heading as="h3">
                         {props.picks
                             ? `${props.picks[0]} vs ${props.picks[1]}`
