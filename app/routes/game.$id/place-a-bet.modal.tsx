@@ -6,9 +6,16 @@ import { useTransactionsObserver } from '~/utils/transactions-observer';
 import toast from 'react-hot-toast';
 
 import type { ActionModalProps } from '~/components/portal/action-modal';
-import type { GetGameByIdResponse, PlaceABet } from '~/use-cases/games/type';
+import type {
+    GameViewModel,
+    PlaceABet,
+    PlaceABetResponse
+} from '~/use-cases/games/type';
 
-type PlaceABetModalProps = Pick<ActionModalProps, 'isOpen' | 'onOpenChange'>;
+type PlaceABetModalProps = Pick<ActionModalProps, 'isOpen' | 'onOpenChange'> &
+    Pick<GameViewModel, 'id' | 'picks' | 'tokenAddress'> & {
+        balance: number;
+    };
 
 const PlaceABetModalFetcherKey = 'place-a-bet-fetcher';
 const placeABetFetcherFormKey: Record<keyof PlaceABet, keyof PlaceABet> = {
@@ -22,16 +29,17 @@ const mapPicksOptions = (
     picks?: [string, string]
 ): { key: string; label: string }[] =>
     !picks ? [] : picks.map(pick => ({ key: pick, label: pick }));
-//TODO validate if user is loggeding before act
+
 export const PlaceABetModal = (props: PlaceABetModalProps) => {
-    const loaderData = useLoaderData<GetGameByIdResponse>();
-    const fetcher = useFetcher<any>({ key: PlaceABetModalFetcherKey });
+    const fetcher = useFetcher<PlaceABetResponse>({
+        key: PlaceABetModalFetcherKey
+    });
     const transactionsObserver = useTransactionsObserver();
 
     useEffect(() => {
         if (fetcher.data?.ok) {
             transactionsObserver?.notify?.(
-                fetcher.data.data.transactionHash,
+                fetcher.data.transactionHash!,
                 async () => {
                     toast.success('Bet placed successfully!');
                 }
@@ -57,7 +65,7 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
         >
             <Input
                 name={placeABetFetcherFormKey.gameId}
-                value={loaderData.game?.id?.toString()}
+                value={props.id?.toString?.()}
                 label="Game id"
                 variant="bordered"
                 isReadOnly
@@ -68,7 +76,7 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
                 required
                 name={placeABetFetcherFormKey.pick}
                 autoFocus
-                items={mapPicksOptions(loaderData.game?.picks)}
+                items={mapPicksOptions(props.picks)}
                 label="Your pick"
                 placeholder="Enter your selected pick"
                 variant="bordered"
@@ -77,7 +85,7 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
             </Select>
             <Input
                 name={placeABetFetcherFormKey.token}
-                value={loaderData.game?.tokenAddress}
+                value={props.tokenAddress}
                 label="Token"
                 variant="bordered"
                 isReadOnly
@@ -90,6 +98,9 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
                 label="Amount"
                 placeholder="Enter the amount of tokens you want to spend"
                 variant="bordered"
+                type="number"
+                min={1}
+                max={props.balance}
             />
         </ActionModal>
     );
