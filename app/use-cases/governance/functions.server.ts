@@ -1,10 +1,11 @@
-import { getWalletCookie } from '../wallet/cookies';
+import { getWallet } from '../wallet/functions';
+
 import type { PreActionResponse } from './type';
 
 export const preAction = async (
     request: Request
 ): Promise<PreActionResponse> => {
-    const wallet = await getWalletCookie(request);
+    const wallet = await getWallet(request);
 
     if (wallet.address) {
         const formData = Object.fromEntries(await request.formData());
