@@ -28,14 +28,14 @@ export const getWallet = async (
             );
 
         return {
-            address,
             isDAOMember,
+            address: addressFallback,
             ethBalance: getBalanceRes.data?.balance
         };
     }
 
     return {
-        address
+        address: addressFallback
     };
 };
 
