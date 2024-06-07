@@ -200,7 +200,7 @@ const Auth = () => {
                         }
                     >
                         {isSubmitting
-                            ? 'Submitting...'
+                            ? 'Logging in...'
                             : wallet.status === 'connected'
                               ? 'Logout'
                               : 'Login'}
