@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useFetcher, useLocation, useNavigation } from '@remix-run/react';
 import ethIcon from '~/assets/images/eth-icon.svg';
 import {
@@ -14,6 +15,7 @@ import {
     Progress
 } from '@nextui-org/react';
 import { useWallet } from '~/use-cases/wallet/use-wallet';
+
 import type { WalletData } from '~/use-cases/wallet';
 
 export const AuthFetcherKey = 'auth-fetcher';
@@ -164,9 +166,17 @@ const Auth = () => {
         );
     };
 
+    useEffect(() => {
+        if (wallet.status === 'disconnected')
+            fetcher.submit(null, {
+                method: 'GET',
+                action: '/resource/auth'
+            });
+    }, []);
+
     return (
         <NavbarContent justify="end">
-            {fetcher.data?.ethBalance && (
+            {wallet.status === 'connected' && fetcher.data?.ethBalance && (
                 <NavbarItem>
                     <Chip
                         color="warning"

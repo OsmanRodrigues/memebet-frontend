@@ -3,6 +3,7 @@ import * as logger from '~/utils/logger';
 
 export type WalletStatus =
     | 'disconnected'
+    | 'disconnect_imperative'
     | 'connected'
     | 'pending'
     | 'success'
@@ -46,14 +47,7 @@ export function useWallet(
     const addressChangeListenerRef =
         useRef<(accounts: `0x${string}`[]) => Promise<void>>();
     const chainDisconnectListenerRef = useRef<(err: any) => Promise<void>>();
-    const [data, setData] = useState<WalletData>(() =>
-        defaultAddress
-            ? {
-                  ...initialData,
-                  address: defaultAddress
-              }
-            : initialData
-    );
+    const [data, setData] = useState<WalletData>(initialData);
     const errorFallback = 'Please connect to MetaMask.';
 
     const removeAddressChangeListener = (provider?: typeof window.ethereum) => {
@@ -182,13 +176,17 @@ export function useWallet(
                 removeAddressChangeListener(provider);
                 removeChainDisconnectListener(provider);
                 handler?.();
-                setData(initialData);
+                setData({ ...initialData, status: 'disconnect_imperative' });
             });
     };
 
     useEffect(() => {
-        if (data.status === 'disconnected' && data.address) {
-            setData(prev => ({ ...prev, status: 'pending' }));
+        if (data.status === 'disconnected' && defaultAddress) {
+            setData(prev => ({
+                ...prev,
+                status: 'pending',
+                address: defaultAddress
+            }));
             const provider = window.ethereum;
             provider
                 ?.request?.({
@@ -216,7 +214,7 @@ export function useWallet(
                     removeChainDisconnectListener(provider);
             }
         };
-    }, [data.address, data.status]);
+    }, [defaultAddress, data.status]);
 
     return [data, { connectWallet, disconnectWallet }];
 }
