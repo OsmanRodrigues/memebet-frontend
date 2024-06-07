@@ -124,6 +124,15 @@ export function useWallet(
         };
         providerFallback!.on('disconnect', chainDisconnectListenerRef.current);
     };
+    const onConnectError = (err: any) => {
+        const errFallback = err.code === 4001 ? errorFallback : err;
+        setData(prev => ({
+            ...prev,
+            error: errFallback,
+            status: 'error'
+        }));
+        throw errFallback;
+    };
 
     const connectWallet: WalletDispatch['connectWallet'] = (
         handler,
@@ -142,15 +151,7 @@ export function useWallet(
 
                     return accounts[0];
                 })
-                .catch((err: any) => {
-                    const errFallback = err.code === 4001 ? errorFallback : err;
-                    setData(prev => ({
-                        ...prev,
-                        error: errFallback,
-                        status: 'error'
-                    }));
-                    throw errFallback;
-                });
+                .catch((err: any) => onConnectError(err));
         } else {
             throw errorFallback;
         }
@@ -202,7 +203,8 @@ export function useWallet(
                 ?.then?.(() => {
                     logger.logInfo('Wallet auto-connected successfully ->');
                     connectWallet(defaultHandler, provider);
-                });
+                })
+                ?.catch(err => onConnectError(err));
         }
 
         return () => {

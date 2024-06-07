@@ -8,11 +8,12 @@ export type WalletData = {
     ethBalance?: string;
     isDAOMember?: boolean;
 };
+export type GetWalletResponse = WalletData & { error?: any };
 
 export const getWallet = async (
     request?: Request,
     address?: string
-): Promise<WalletData> => {
+): Promise<GetWalletResponse> => {
     const addressFallback =
         address ??
         (request ? (await getWalletCookie(request!))?.address : undefined);
@@ -21,6 +22,9 @@ export const getWallet = async (
         const getBalanceRes =
             await walletService.getEthBalance(addressFallback);
         const getMembersRes = await governanceService.getDAOMembersList();
+
+        if (!getBalanceRes.ok) return { error: getBalanceRes.error };
+
         const isDAOMember =
             !!getMembersRes.data?.length &&
             getMembersRes.data.some(
