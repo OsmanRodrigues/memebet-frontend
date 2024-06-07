@@ -34,6 +34,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
             throw new Response(useCaseRes.error, {
                 status: useCaseRes.status
             });
+        else if (useCaseRes.error)
+            throw new Response(useCaseRes.error, {
+                status: useCaseRes.status ?? 400
+            });
 
         return json(useCaseRes);
     }
