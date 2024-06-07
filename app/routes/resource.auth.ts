@@ -6,9 +6,17 @@ import {
 import * as walletUseCase from '~/use-cases/wallet/functions';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const wallet = await walletUseCase.getWallet(request);
+    const getWalletRes = await walletUseCase.getWallet(request);
 
-    return json(wallet);
+    if (getWalletRes.error)
+        throw new Response(
+            `An error occurred on try authenticate user: ${getWalletRes.error}`,
+            {
+                status: 500
+            }
+        );
+
+    return json(getWalletRes);
 }
 
 export async function action({ request }: ActionFunctionArgs) {
