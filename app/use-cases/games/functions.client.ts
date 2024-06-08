@@ -2,11 +2,11 @@ import * as gamesService from '~/services/games/service';
 import { validateFormData } from '../governance/helpers';
 
 import type { PlaceABetArgs } from '~/services/games/type';
-import type { PlaceABetResponse } from './type';
+import type { ActionUseCaseResponse } from '../shared-type';
 
 export const submitPlaceABet = async (
     args: PlaceABetArgs
-): Promise<PlaceABetResponse> => {
+): Promise<ActionUseCaseResponse> => {
     validateFormData(args);
 
     const placeABetRes = await gamesService.placeABet(args);

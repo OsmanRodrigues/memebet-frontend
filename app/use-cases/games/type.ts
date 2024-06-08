@@ -1,5 +1,4 @@
 import type { Game, PlaceABetArgs } from '~/services/games/type';
-import type { RequestBuilderResponse } from '~/utils';
 
 export type GameListViewModel = Pick<
     Game,
@@ -28,6 +27,3 @@ export type GetGamesListResponse = GamesUseCaseBaseResponse & {
     gamesList?: GameListViewModel[];
 };
 export type PlaceABet = Omit<PlaceABetArgs, 'provider' | 'signerAddress'>;
-export type PlaceABetResponse = Omit<RequestBuilderResponse, 'data'> & {
-    transactionHash?: string;
-};
