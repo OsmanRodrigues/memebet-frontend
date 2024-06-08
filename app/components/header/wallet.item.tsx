@@ -104,7 +104,7 @@ const DepositTokenModal = (
                 action: '/resource/wallet?reset=true',
                 method: 'POST'
             });
-            toast.success('Place a bet request sent!');
+            toast.success('Token deposit request sent!');
             props.onOpenChange?.(false);
         } else if (fetcher.data?.error) toast.error(fetcher.data.error);
     }, [fetcher.data]);
