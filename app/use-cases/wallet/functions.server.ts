@@ -2,13 +2,9 @@ import * as walletService from '~/services/wallet/service';
 import * as governanceService from '~/services/governance/service';
 import { WalletKey } from './constants';
 import { getWalletCookie, walletCookieStore } from './cookies';
+import { preActionWithAuth } from '../shared-helper';
 
-export type WalletData = {
-    address?: string;
-    ethBalance?: string;
-    isDAOMember?: boolean;
-};
-export type GetWalletResponse = WalletData & { error?: any };
+import type { GetWalletResponse, WalletFormData } from './type';
 
 export const getWallet = async (
     request?: Request,
@@ -42,7 +38,6 @@ export const getWallet = async (
         address: addressFallback
     };
 };
-
 export const handleSubmitWalletAddress = async (request: Request) => {
     const walletCookie = await getWalletCookie(request);
     const formData = await request.formData();
@@ -64,3 +59,5 @@ export const handleSubmitWalletAddress = async (request: Request) => {
         serializedCookie: serializedCookie
     };
 };
+export const walletPreAction = (request: Request) =>
+    preActionWithAuth<WalletFormData>(request, getWallet);
