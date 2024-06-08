@@ -1,16 +1,7 @@
-import { getWallet } from '../wallet/functions';
+import { preActionWithAuth } from '../shared-helper';
+import { getWallet } from '../wallet/functions.server';
 
-import type { PreActionResponse } from './type';
+import type { GovernanceFormData } from './type';
 
-export const preAction = async (
-    request: Request
-): Promise<PreActionResponse> => {
-    const wallet = await getWallet(request);
-
-    if (wallet.address) {
-        const formData = Object.fromEntries(await request.formData());
-        return { wallet, formData: formData as any };
-    }
-
-    return { error: 'User not authenticated!', status: 401 };
-};
+export const governancePreAction = async (request: Request) =>
+    preActionWithAuth<GovernanceFormData>(request, getWallet);

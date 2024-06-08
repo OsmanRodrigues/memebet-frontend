@@ -1,8 +1,6 @@
-import type { PreActionResponse } from './type';
+import type { GovernanceFormData } from './type';
 
-export const validateFormData = (
-    formData: Partial<PreActionResponse['formData']>
-) => {
+export const validateFormData = (formData: Partial<GovernanceFormData>) => {
     if (!formData) return { error: 'Form data must be provided.' };
     else if (Object.values(formData).some(value => !value))
         return {
