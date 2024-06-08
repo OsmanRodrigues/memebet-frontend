@@ -1,13 +1,15 @@
 import { validateFormData } from './helpers';
 import * as governanceService from '~/services/governance/service';
+
 import type {
     CreateGameArgs,
     CreateValidationFunctionArgs
 } from '~/services/governance/type';
+import type { ActionUseCaseResponse } from '../shared-type';
 
 export const handleSubmitCreateValidationFunction = async (
     args: CreateValidationFunctionArgs
-) => {
+): Promise<ActionUseCaseResponse> => {
     validateFormData(args);
 
     const createValidationFunctionRes =
@@ -15,6 +17,7 @@ export const handleSubmitCreateValidationFunction = async (
 
     if (!createValidationFunctionRes.ok)
         return {
+            ok: false,
             error:
                 createValidationFunctionRes.error ??
                 'An error occurried while create the function.'
@@ -22,7 +25,9 @@ export const handleSubmitCreateValidationFunction = async (
 
     return createValidationFunctionRes;
 };
-export const handleSubmitCreateGame = async (args: CreateGameArgs) => {
+export const handleSubmitCreateGame = async (
+    args: CreateGameArgs
+): Promise<ActionUseCaseResponse> => {
     validateFormData(args);
 
     const createGameRes = await governanceService.createGame({
@@ -33,6 +38,7 @@ export const handleSubmitCreateGame = async (args: CreateGameArgs) => {
 
     if (!createGameRes.ok)
         return {
+            ok: false,
             error:
                 createGameRes.error ??
                 'An error occurried while create the game.'
