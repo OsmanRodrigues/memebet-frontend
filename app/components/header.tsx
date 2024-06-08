@@ -14,11 +14,12 @@ import {
     NavbarMenuToggle,
     Progress
 } from '@nextui-org/react';
-import { useWallet } from '~/use-cases/wallet/use-wallet';
+import { UseWalletData, useWallet } from '~/use-cases/wallet/use-wallet';
 
-import type { WalletData } from '~/use-cases/wallet';
+import type { WalletData } from '~/use-cases/wallet/type';
 
 export const AuthFetcherKey = 'auth-fetcher';
+export const WalletFetcherKey = 'wallet-fetcher-key';
 export enum AuthFormKey {
     address = 'address'
 }
@@ -124,6 +125,43 @@ const DefaultContent = () => {
         </NavbarContent>
     );
 };
+const WalletDisplay = (
+    props: Pick<WalletData & UseWalletData, 'ethBalance' | 'status'>
+) => {
+    const fetcher = useFetcher({ key: WalletFetcherKey });
+
+    console.log(WalletFetcherKey, fetcher.data);
+
+    if (props.status === 'connected' && props.ethBalance) {
+        const handleSubmitTokenDeposit = () => {
+            const formData = new FormData();
+            formData.append('amount', '1');
+            fetcher.submit(formData, {
+                action: '/resource/wallet?deposit=true',
+                method: 'POST'
+            });
+        };
+
+        return (
+            <>
+                <NavbarItem>
+                    <Button onClick={handleSubmitTokenDeposit}>deposit</Button>
+                </NavbarItem>
+                <NavbarItem>
+                    <Chip
+                        color="warning"
+                        variant="shadow"
+                        avatar={<Avatar name="$" src={ethIcon} />}
+                    >
+                        {props.ethBalance}
+                    </Chip>
+                </NavbarItem>
+            </>
+        );
+    }
+
+    return null;
+};
 const Auth = () => {
     const fetcher = useFetcher<Partial<WalletData>>({
         key: AuthFetcherKey
@@ -176,17 +214,10 @@ const Auth = () => {
 
     return (
         <NavbarContent justify="end">
-            {wallet.status === 'connected' && fetcher.data?.ethBalance && (
-                <NavbarItem>
-                    <Chip
-                        color="warning"
-                        variant="shadow"
-                        avatar={<Avatar name="$" src={ethIcon} />}
-                    >
-                        {fetcher.data?.ethBalance}
-                    </Chip>
-                </NavbarItem>
-            )}
+            <WalletDisplay
+                status={wallet.status}
+                ethBalance={fetcher.data?.ethBalance}
+            />
             <NavbarItem>
                 <fetcher.Form>
                     <Button
