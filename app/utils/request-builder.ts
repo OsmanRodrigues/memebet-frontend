@@ -1,5 +1,5 @@
 import { type Address, Tikua } from '@doiim/tikua';
-import { transformHexToUTF8 } from './transformer';
+import { transformHexToUTF8, transformUTF8toHex } from './transformer';
 import { advanceABIMap, dappAddress } from '~/services/shared-constants';
 import { logError, logSuccess } from './logger';
 
@@ -42,6 +42,41 @@ class RequestBuilderSingleton {
         return this;
     }
 
+    async depositToken(
+        amount: bigint
+    ): Promise<RequestBuilderResponse<{ transactionHash: string }>> {
+        try {
+            if (this.appAddress && this.signerAddress && this.provider) {
+                if (!this.requester)
+                    this.requester = this.requester = new Tikua({
+                        abi: this.abi ?? [],
+                        appAddress: this.appAddress,
+                        signerAddress: this.signerAddress as Address,
+                        provider: this.provider
+                    });
+
+                const depositRes = await this.requester?.depositEther(
+                    amount,
+                    transformUTF8toHex(
+                        `${amount} eth deposited to ${this.signerAddress}`
+                    )
+                );
+
+                return {
+                    ok: true,
+                    data: {
+                        transactionHash: depositRes
+                    }
+                };
+            } else {
+                throw new Error(
+                    `At least a dapp address, a signer address and a provider must be provided to deposit token.`
+                );
+            }
+        } catch (err: any) {
+            return { ok: false, error: err.message ?? err };
+        }
+    }
     async inspect<Result = any>(
         url?: string
     ): Promise<RequestBuilderResponse<Result>> {
