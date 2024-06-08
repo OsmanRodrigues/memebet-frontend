@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { useFetcher } from '@remix-run/react';
 import { WalletData } from '~/use-cases/wallet/type';
@@ -53,14 +54,13 @@ export const AuthItem = () => {
         );
     };
 
-    // TODO remove this comment
-    // useEffect(() => {
-    //     if (wallet.status === 'disconnected')
-    //         fetcher.submit(null, {
-    //             method: 'GET',
-    //             action: '/resource/auth'
-    //         });
-    // }, []);
+    useEffect(() => {
+        if (wallet.status === 'disconnected')
+            fetcher.submit(null, {
+                method: 'GET',
+                action: '/resource/auth'
+            });
+    }, []);
 
     return (
         <NavbarContent justify="end">
