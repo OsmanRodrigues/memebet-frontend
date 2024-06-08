@@ -9,7 +9,7 @@ export type WalletStatus =
     | 'success'
     | 'error';
 
-type WalletData = {
+export type UseWalletData = {
     address: string | null;
     error: any;
     status: WalletStatus;
@@ -31,23 +31,23 @@ type WalletDispatch = {
     ) => Promise<null>;
 };
 
-const initialData: WalletData = {
+const initialData: UseWalletData = {
     status: 'disconnected',
     address: null,
     error: null
 };
 
 export function useWallet(
-    defaultAddress?: WalletData['address'],
+    defaultAddress?: UseWalletData['address'],
     defaultHandler?: {
         onAddressChange?: AddressChangeHandler;
         onDisconnectWallet?: WalletDisconnectHandler;
     }
-): [WalletData, WalletDispatch] {
+): [UseWalletData, WalletDispatch] {
     const addressChangeListenerRef =
         useRef<(accounts: `0x${string}`[]) => Promise<void>>();
     const chainDisconnectListenerRef = useRef<(err: any) => Promise<void>>();
-    const [data, setData] = useState<WalletData>(initialData);
+    const [data, setData] = useState<UseWalletData>(initialData);
     const errorFallback = 'Please connect to MetaMask.';
 
     const removeAddressChangeListener = (provider?: typeof window.ethereum) => {
