@@ -17,7 +17,7 @@ import { PlaceABetModal } from './place-a-bet.modal';
 import toast from 'react-hot-toast';
 
 import type { GameViewModel } from '~/use-cases/games/type';
-import type { WalletData } from '~/use-cases/wallet/functions';
+import type { WalletData } from '~/use-cases/wallet/type';
 
 export const GameInfosSection = (
     props: Omit<GameViewModel, 'currentOdds' | 'playerIds'>

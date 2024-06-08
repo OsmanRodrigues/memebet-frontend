@@ -11,7 +11,7 @@ import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
 import { logInfo } from '~/utils/logger';
 
-import type { WalletData } from '~/use-cases/wallet';
+import type { WalletData } from '~/use-cases/wallet/type';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 
 export async function loader({ request }: LoaderFunctionArgs) {
