@@ -55,7 +55,7 @@ class RequestBuilderSingleton {
                         provider: this.provider
                     });
 
-                const depositRes = await this.requester?.depositEther(
+                const depositRes = await this.requester!.depositEther(
                     amount,
                     transformUTF8toHex(
                         `${amount} eth deposited to ${this.signerAddress}`
