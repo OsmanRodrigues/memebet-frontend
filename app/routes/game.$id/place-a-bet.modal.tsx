@@ -6,11 +6,8 @@ import { useTransactionsObserver } from '~/utils/transactions-observer';
 import toast from 'react-hot-toast';
 
 import type { ActionModalProps } from '~/components/portal/action-modal';
-import type {
-    GameViewModel,
-    PlaceABet,
-    PlaceABetResponse
-} from '~/use-cases/games/type';
+import type { GameViewModel, PlaceABet } from '~/use-cases/games/type';
+import type { ActionUseCaseResponse } from '~/use-cases/shared-type';
 
 type PlaceABetModalProps = Pick<ActionModalProps, 'isOpen' | 'onOpenChange'> &
     Pick<GameViewModel, 'id' | 'picks' | 'tokenAddress'> & {
@@ -32,7 +29,7 @@ const mapPicksOptions = (
     !picks ? [] : picks.map(pick => ({ key: pick, label: pick }));
 
 export const PlaceABetModal = (props: PlaceABetModalProps) => {
-    const fetcher = useFetcher<PlaceABetResponse>({
+    const fetcher = useFetcher<ActionUseCaseResponse>({
         key: PlaceABetModalFetcherKey
     });
     const navigate = useNavigate();

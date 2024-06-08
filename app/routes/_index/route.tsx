@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react';
-import type { WalletData } from '~/use-cases/wallet';
+import type { WalletData } from '~/use-cases/wallet/type';
 
 export default function Home() {
     const fetcher = useFetcher<WalletData>({ key: 'auth-fetcher' });
