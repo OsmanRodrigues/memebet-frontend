@@ -10,7 +10,7 @@ import {
 } from '@nextui-org/react';
 import { Heading } from '~/components/typography/heading';
 import { SectionWrapper } from '~/components/wrapper/section';
-import { AuthFetcherKey } from '~/components/header';
+import { AuthFetcherKey } from '~/components/header/auth.item';
 import { getDateStr } from '~/utils/date';
 import { transformBalanceStrIntoNum } from '~/utils/transformer';
 import { PlaceABetModal } from './place-a-bet.modal';
