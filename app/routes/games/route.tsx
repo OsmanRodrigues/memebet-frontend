@@ -5,7 +5,7 @@ import {
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
 import * as gamesUseCase from '~/use-cases/games/functions.server';
-import { AuthFetcherKey } from '~/components/header';
+import { AuthFetcherKey } from '~/components/header/auth.item';
 import { ErrorFallback } from '~/components/error-fallback';
 import { CreateGameSection } from './create-game.section';
 import { GamesListSection } from './games-list.section';
