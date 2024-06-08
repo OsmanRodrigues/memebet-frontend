@@ -42,16 +42,14 @@ export function Layout({ children }: PropsWithChildren) {
             </head>
             <body className="dark text-foreground bg-background">
                 <NextUIProvider>
-                    <Header />
                     <Toaster
                         position="bottom-center"
                         toastOptions={{ duration: 4000 }}
                     />
-                    <MainWrapper>
-                        <TransactionsObserverProvider>
-                            {children}
-                        </TransactionsObserverProvider>
-                    </MainWrapper>
+                    <TransactionsObserverProvider>
+                        <Header />
+                        <MainWrapper>{children}</MainWrapper>
+                    </TransactionsObserverProvider>
                     <ScrollRestoration />
                     <Scripts />
                 </NextUIProvider>
