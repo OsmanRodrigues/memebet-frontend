@@ -1,5 +1,7 @@
-import { validateSubmitCreateValidationFunctionData } from './validators';
-import { validateFormData } from './helpers';
+import {
+    validateSubmitCreateGameData,
+    validateSubmitCreateValidationFunctionData
+} from './validators';
 import * as governanceService from '~/services/governance/service';
 
 import type {
@@ -39,15 +41,28 @@ export const handleSubmitCreateValidationFunction = async ({
 
     return createValidationFunctionRes;
 };
-export const handleSubmitCreateGame = async (
-    args: CreateGameArgs
-): Promise<ActionUseCaseResponse> => {
-    validateFormData(args);
-
-    const createGameRes = await governanceService.createGame({
+export const handleSubmitCreateGame = async ({
+    provider,
+    signerAddress,
+    ...args
+}: CreateGameArgs): Promise<ActionUseCaseResponse> => {
+    const dataFallback = {
         ...args,
         start: new Date(args.start).getTime(),
         end: new Date(args.end).getTime()
+    };
+    const validationRes = await validateSubmitCreateGameData(dataFallback);
+
+    if (validationRes?.error)
+        return {
+            ok: false,
+            error: validationRes.message ?? validationRes.error
+        };
+
+    const createGameRes = await governanceService.createGame({
+        provider,
+        signerAddress,
+        ...dataFallback
     });
 
     if (!createGameRes.ok)
