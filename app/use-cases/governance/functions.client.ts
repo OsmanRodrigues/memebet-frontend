@@ -1,3 +1,4 @@
+import { validateSubmitCreateValidationFunctionData } from './validators';
 import { validateFormData } from './helpers';
 import * as governanceService from '~/services/governance/service';
 
@@ -7,13 +8,26 @@ import type {
 } from '~/services/governance/type';
 import type { ActionUseCaseResponse } from '../shared-type';
 
-export const handleSubmitCreateValidationFunction = async (
-    args: CreateValidationFunctionArgs
-): Promise<ActionUseCaseResponse> => {
-    validateFormData(args);
+export const handleSubmitCreateValidationFunction = async ({
+    provider,
+    signerAddress,
+    ...args
+}: CreateValidationFunctionArgs): Promise<ActionUseCaseResponse> => {
+    const validationRes =
+        await validateSubmitCreateValidationFunctionData(args);
+
+    if (validationRes?.error)
+        return {
+            ok: false,
+            error: validationRes.message ?? validationRes.error
+        };
 
     const createValidationFunctionRes =
-        await governanceService.createValidationFunction(args);
+        await governanceService.createValidationFunction({
+            signerAddress,
+            provider,
+            ...args
+        });
 
     if (!createValidationFunctionRes.ok)
         return {
