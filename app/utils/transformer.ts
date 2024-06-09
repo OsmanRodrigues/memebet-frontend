@@ -2,9 +2,11 @@ import { stringToHex, hexToString } from 'viem';
 
 export const transformHexToUTF8 = (str: string): string =>
     hexToString(str as `0x${string}`);
-export const transformUTF8toHex = (string: string): string => {
-    return stringToHex(string);
-};
+export const transformUTF8toHex = (string: string): string =>
+    stringToHex(string, {
+        size: string.length < 32 ? 32 : undefined
+    });
+
 export const textShortener = (text: string, maxSize = 8): string => {
     const offsetSize = 3;
     if (text.length <= maxSize || text.length < offsetSize) return text;
