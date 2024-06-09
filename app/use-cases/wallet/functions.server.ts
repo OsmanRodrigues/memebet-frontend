@@ -19,7 +19,12 @@ export const getWallet = async (
             await walletService.getEthBalance(addressFallback);
         const getMembersRes = await governanceService.getDAOMembersList();
 
-        if (!getBalanceRes.ok) return { error: getBalanceRes.error };
+        if (!getBalanceRes.ok || !getMembersRes.ok)
+            return {
+                error:
+                    (getBalanceRes.message || getBalanceRes.error) ??
+                    (getMembersRes.message || getMembersRes.error)
+            };
 
         const isDAOMember =
             !!getMembersRes.data?.length &&

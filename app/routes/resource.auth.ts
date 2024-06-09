@@ -21,11 +21,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
     const { cookie, serializedCookie } =
         await walletUseCase.handleSubmitWalletAddress(request);
-    let wallet: WalletData | null = null;
+    let wallet: (WalletData & { error?: any }) | null = null;
 
     if (cookie.address) {
         wallet = await walletUseCase.getWallet(undefined, cookie.address);
     }
+
+    if (wallet?.error)
+        throw new Response(wallet.error, {
+            status: 500
+        });
 
     const payloadFallback = wallet ?? cookie;
 
