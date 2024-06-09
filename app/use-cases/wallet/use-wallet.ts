@@ -24,7 +24,7 @@ type WalletDispatch = {
             onDisconnectWallet?: WalletDisconnectHandler;
         },
         provider?: typeof window.ethereum
-    ) => Promise<string>;
+    ) => Promise<string | undefined> | undefined;
     disconnectWallet: (
         provider?: typeof window.ethereum,
         handler?: WalletDisconnectHandler
@@ -134,6 +134,19 @@ export function useWallet(
         throw errFallback;
     };
 
+    const requestPermission = (provider?: typeof window.ethereum) => {
+        const providerFallback = provider ?? window.ethereum;
+        return providerFallback?.request?.({
+            method: 'wallet_requestPermissions',
+            params: [
+                {
+                    eth_accounts: {
+                        id: data.address
+                    }
+                }
+            ]
+        });
+    };
     const connectWallet: WalletDispatch['connectWallet'] = (
         handler,
         provider
@@ -142,18 +155,25 @@ export function useWallet(
         const providerFallback = provider ?? window.ethereum;
         const handlerFallback = handler ?? defaultHandler;
 
-        if (providerFallback?.isConnected?.()) {
-            return providerFallback
-                .request({ method: 'eth_requestAccounts' })
-                .then((accounts: string[]) => {
+        const requestAccounts = () =>
+            providerFallback
+                ?.request?.({ method: 'eth_requestAccounts' })
+                ?.then?.((accounts: string[]) => {
                     setAddressChange(providerFallback, handlerFallback);
                     onChainDisconnect(providerFallback);
 
                     return accounts[0];
                 })
-                .catch((err: any) => onConnectError(err));
+                ?.catch?.((err: any) => onConnectError(err));
+
+        if (providerFallback?.isConnected?.()) {
+            return requestAccounts();
         } else {
-            throw errorFallback;
+            return requestPermission(providerFallback)
+                ?.then?.(() => requestAccounts())
+                ?.catch?.(err => {
+                    throw onConnectError(err);
+                });
         }
     };
     const disconnectWallet: WalletDispatch['disconnectWallet'] = (
@@ -189,17 +209,7 @@ export function useWallet(
                 address: defaultAddress
             }));
             const provider = window.ethereum;
-            provider
-                ?.request?.({
-                    method: 'wallet_requestPermissions',
-                    params: [
-                        {
-                            eth_accounts: {
-                                id: data.address
-                            }
-                        }
-                    ]
-                })
+            requestPermission()
                 ?.then?.(() => {
                     logger.logInfo('Wallet auto-connected successfully ->');
                     connectWallet(defaultHandler, provider);
