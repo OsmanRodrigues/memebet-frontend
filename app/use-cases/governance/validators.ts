@@ -29,7 +29,7 @@ export const validateSubmitCreateValidationFunctionData = async (
             functionCode: string()
                 .min(15)
                 .matches(
-                    /const\s[A-z]*\s=[\s\S]\([\sA-z0-9,:_]*\)\s=>|function/
+                    /const\s[A-z0-9-_]*\s=[\s\S]\([\sA-z0-9,:_]*\)\s=>|function/
                 )
                 .required()
         },
