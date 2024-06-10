@@ -209,12 +209,19 @@ export function useWallet(
                 address: defaultAddress
             }));
             const provider = window.ethereum;
-            requestPermission()
-                ?.then?.(() => {
-                    logger.logInfo('Wallet auto-connected successfully ->');
-                    connectWallet(defaultHandler, provider);
-                })
-                ?.catch(err => onConnectError(err));
+            const successMsg = 'Wallet auto-connected successfully ->';
+
+            if (provider?.isConnected?.())
+                connectWallet(defaultHandler, provider)?.then?.(() =>
+                    logger.logInfo(successMsg)
+                );
+            else
+                requestPermission()
+                    ?.then?.(() => {
+                        logger.logInfo(successMsg);
+                        connectWallet(defaultHandler, provider);
+                    })
+                    ?.catch(err => onConnectError(err));
         }
 
         return () => {
