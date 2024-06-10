@@ -7,6 +7,7 @@ import {
     Scripts,
     ScrollRestoration,
     isRouteErrorResponse,
+    useLocation,
     useRouteError
 } from '@remix-run/react';
 import stylesheet from '~/tailwind.css?url';
@@ -22,6 +23,10 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: PropsWithChildren) {
+    const location = useLocation();
+    const gradientBg = 'bg-gradient-to-t from-warning to-secondary';
+    const isHome = location.pathname === '/';
+
     return (
         <html>
             <head>
@@ -40,7 +45,9 @@ export function Layout({ children }: PropsWithChildren) {
                 <Meta />
                 <Links />
             </head>
-            <body className="dark text-foreground bg-background">
+            <body
+                className={`dark text-foreground ${isHome ? gradientBg : 'bg-background'}`}
+            >
                 <NextUIProvider>
                     <Toaster
                         position="bottom-center"
