@@ -46,57 +46,63 @@ export const HeroSection = () => {
 
     return (
         <SectionWrapper isFirstOfPage>
-            <div className="w-full flex justify-center">
-                <div className="w-52 h-52 relative">
-                    <motion.span
-                        layoutId="emoji1"
-                        className="text-4xl absolute top-0 right-0"
-                        style={{ zIndex: zIndex3 }}
-                        animate={{
-                            x: [0, -144, 0],
-                            y: [0, 144, 0]
-                        }}
-                        transition={transition3}
-                    >
-                        😂
-                    </motion.span>
-                    <motion.span
-                        layoutId="emoji2"
-                        className="text-4xl absolute top-0 left-0"
-                        style={{ zIndex: zIndex2 }}
-                        animate={{
-                            x: [10, 144, 10],
-                            y: [0, 144, 0]
-                        }}
-                        transition={transition2}
-                    >
-                        😐
-                    </motion.span>
-                    <motion.span
-                        layoutId="emoji3"
-                        className="absolute top-0 left-20 text-4xl"
-                        style={{ zIndex: zIndex1 }}
-                        animate={{
-                            y: [0, 160, 0]
-                        }}
-                        transition={defaultTransition}
-                    >
-                        🤑
-                    </motion.span>
-                    <motion.span
-                        layoutId="emojiMain"
-                        className="absolute top-14 right-10 text-8xl"
-                        animate={{
-                            rotate: 360
-                        }}
-                        transition={{
-                            ...defaultTransition,
-                            ease: 'linear'
-                        }}
-                    >
-                        🪙
-                    </motion.span>
+            <div className="flex items-center mobile:flex-col">
+                <p className="text-6xl grow-1">Betting just for fun.</p>
+                <div className="grow-[3] flex justify-center">
+                    <div className="w-52 h-52 relative">
+                        <motion.span
+                            layoutId="emoji1"
+                            className="text-4xl absolute top-0 right-0"
+                            style={{ zIndex: zIndex3 }}
+                            animate={{
+                                x: [0, -144, 0],
+                                y: [0, 144, 0]
+                            }}
+                            transition={transition3}
+                        >
+                            😂
+                        </motion.span>
+                        <motion.span
+                            layoutId="emoji2"
+                            className="text-4xl absolute top-0 left-0"
+                            style={{ zIndex: zIndex2 }}
+                            animate={{
+                                x: [10, 144, 10],
+                                y: [0, 144, 0]
+                            }}
+                            transition={transition2}
+                        >
+                            😐
+                        </motion.span>
+                        <motion.span
+                            layoutId="emoji3"
+                            className="absolute top-0 left-20 text-4xl"
+                            style={{ zIndex: zIndex1 }}
+                            animate={{
+                                y: [0, 160, 0]
+                            }}
+                            transition={defaultTransition}
+                        >
+                            🤑
+                        </motion.span>
+                        <motion.span
+                            layoutId="emojiMain"
+                            className="absolute top-14 right-10 text-8xl"
+                            animate={{
+                                rotate: 360
+                            }}
+                            transition={{
+                                ...defaultTransition,
+                                ease: 'linear'
+                            }}
+                        >
+                            🪙
+                        </motion.span>
+                    </div>
                 </div>
+                <p className="text-6xl text-right grow-1">
+                    Not just a funny bet.
+                </p>
             </div>
         </SectionWrapper>
     );
