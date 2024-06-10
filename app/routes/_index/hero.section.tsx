@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { animate, motion, motionValue } from 'framer-motion';
 import { SectionWrapper } from '~/components/wrapper/section';
+import { Button, Spacer } from '@nextui-org/react';
+import { Link } from '@remix-run/react';
 
 export const HeroSection = () => {
     const zIndex1 = motionValue(10);
@@ -103,6 +105,14 @@ export const HeroSection = () => {
                 <p className="text-6xl text-right grow-1">
                     Not just a funny bet.
                 </p>
+            </div>
+            <Spacer y={24} />
+            <div className="flex justify-center">
+                <Link to="/games">
+                    <Button color="secondary" variant="shadow">
+                        Start betting
+                    </Button>
+                </Link>
             </div>
         </SectionWrapper>
     );
