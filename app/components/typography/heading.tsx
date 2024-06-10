@@ -7,6 +7,7 @@ type HeadingVariants = {
 type HeadingProps = Partial<HeadingVariants> & {
     children: string;
     className?: string;
+    noPadding?: boolean;
 };
 
 export const Heading = ({ children, ...props }: HeadingProps) => {
@@ -28,7 +29,10 @@ const headingVariants = tv({
             secondary: 'text-secondary',
             black: 'text-black',
             white: 'text-white'
-        } as Record<HeadingVariants['color'], string>
+        } as Record<HeadingVariants['color'], string>,
+        noPadding: {
+            true: 'py-0'
+        }
     },
     defaultVariants: {
         as: 'h2',
