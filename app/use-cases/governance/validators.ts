@@ -19,7 +19,7 @@ export const validateSubmitCreateValidationFunctionData = async (
         string: {
             min: '${path} must be ${min} in length',
             matches:
-                '${path} be a whitespaced arrow function (eg.: "const myfn = (...) => ...") or a regular function statement'
+                '${path} must be an arrow function | anonymous function (eg.: "const myfn = (...) => ...|(...) =>...") or a regular function statement'
         }
     });
 
@@ -29,7 +29,7 @@ export const validateSubmitCreateValidationFunctionData = async (
             functionCode: string()
                 .min(15)
                 .matches(
-                    /const\s[A-z0-9-_]*\s=[\s\S]\([\sA-z0-9,:_]*\)\s=>|function/
+                    /((const\s[A-z0-9_]+\s{0,1}=\s{0,1}){0,1}\([\sA-z0-9,:_.]*\)\s{0,1}=>|function)/
                 )
                 .required()
         },
