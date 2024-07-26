@@ -11,6 +11,7 @@ import type {
 import type { SectionWrapperProps } from '~/components/wrapper/section';
 
 const tableColumns = getColumns({
+    title: 'title',
     picks: 'picks',
     start: 'start',
     end: 'end',
@@ -38,6 +39,12 @@ export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
                     <TableRow key={item.id}>
                         {columnKey => {
                             switch (columnKey) {
+                                case 'title':
+                                    return (
+                                        <TableCell>
+                                            {item.title}
+                                        </TableCell>
+                                    );
                                 case 'picks':
                                     return (
                                         <TableCell>

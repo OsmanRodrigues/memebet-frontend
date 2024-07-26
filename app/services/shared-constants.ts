@@ -8,7 +8,7 @@ export const advanceABI = {
     },
     createGame: {
         name: 'createGame',
-        abi: 'function createGame(bytes32 home, bytes32 away, address token , uint256 start, uint256 end, bytes32 validatorFunctionName)'
+        abi: 'function createGame(string title, bytes32 home, bytes32 away, address token , uint256 start, uint256 end, bytes32 validatorFunctionName)'
     },
     placeBet: {
         name: 'placeBet',

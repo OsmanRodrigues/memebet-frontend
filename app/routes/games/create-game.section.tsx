@@ -37,6 +37,7 @@ const createGameFetcherFormKey: Record<
     keyof CreateGameFetcherData,
     keyof CreateGameFetcherData
 > = {
+    title: 'title',
     home: 'home',
     away: 'away',
     token: 'token',
@@ -200,6 +201,14 @@ const CreateGameModal = (
             fetcherKey={CreateGameFetcherKey}
             {...props}
         >
+            <Input
+                isRequired
+                required
+                name={createGameFetcherFormKey.title}
+                label="Title"
+                placeholder="Enter the title or question for the bet"
+                variant="bordered"
+            />
             <Input
                 isRequired
                 required
