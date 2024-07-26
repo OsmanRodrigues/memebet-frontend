@@ -4,7 +4,7 @@ export const dappAddress = '0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e';
 export const advanceABI = {
     addValidationFunction: {
         name: 'addValidationFunction',
-        abi: 'function addValidationFunction(bytes32 name, bytes32 functionString)'
+        abi: 'function addValidationFunction(bytes32 name, bytes functionString)'
     },
     createGame: {
         name: 'createGame',

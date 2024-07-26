@@ -1,6 +1,6 @@
 import {
-    validateSubmitCreateGameData,
-    validateSubmitCreateValidationFunctionData
+    validateSubmitCreateGameData
+    // validateSubmitCreateValidationFunctionData
 } from './validators';
 import * as governanceService from '~/services/governance/service';
 
@@ -15,14 +15,14 @@ export const handleSubmitCreateValidationFunction = async ({
     signerAddress,
     ...args
 }: CreateValidationFunctionArgs): Promise<ActionUseCaseResponse> => {
-    const validationRes =
-        await validateSubmitCreateValidationFunctionData(args);
+    // const validationRes =
+    //     await validateSubmitCreateValidationFunctionData(args);
 
-    if (validationRes?.error)
-        return {
-            ok: false,
-            error: validationRes.message ?? validationRes.error
-        };
+    // if (validationRes?.error)
+    //     return {
+    //         ok: false,
+    //         error: validationRes.message ?? validationRes.error
+    //     };
 
     const createValidationFunctionRes =
         await governanceService.createValidationFunction({
