@@ -11,6 +11,7 @@ export type CreateGameArgs = Pick<
     RequestBuilderInitArgs,
     'provider' | 'signerAddress'
 > & {
+    title: string;
     home: string;
     away: string;
     token: string;

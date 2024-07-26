@@ -2,10 +2,11 @@ import type { Game, PlaceABetArgs } from '~/services/games/type';
 
 export type GameListViewModel = Pick<
     Game,
-    'id' | 'picks' | 'startTime' | 'endTime' | 'betPool'
+    'title' | 'id' | 'picks' | 'startTime' | 'endTime' | 'betPool'
 >;
 export type GameViewModel = Pick<
     Game,
+    | 'title'
     | 'id'
     | 'picks'
     | 'startTime'

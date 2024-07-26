@@ -10,7 +10,7 @@ import type { GameViewModel, PlaceABet } from '~/use-cases/games/type';
 import type { ActionUseCaseResponse } from '~/use-cases/shared-type';
 
 type PlaceABetModalProps = Pick<ActionModalProps, 'isOpen' | 'onOpenChange'> &
-    Pick<GameViewModel, 'id' | 'picks' | 'tokenAddress'> & {
+    Pick<GameViewModel, 'title' | 'id' | 'picks' | 'tokenAddress'> & {
         balance: number;
         onSuccess?: () => void;
     };
@@ -59,7 +59,7 @@ export const PlaceABetModal = (props: PlaceABetModalProps) => {
 
     return (
         <ActionModal
-            title="Place a bet"
+            // title="Place a bet" {`Place a bet - ${props.title?.toString?.()} `}
             action="/resource/game"
             method="POST"
             fetcherForm={fetcher.Form}
