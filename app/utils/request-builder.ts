@@ -1,5 +1,5 @@
 import { type Address, Tikua } from '@doiim/tikua';
-import { transformHexToUTF8, transformUTF8toHex } from './transformer';
+import { transformHexToUTF8 /*transformUTF8toHex*/ } from './transformer';
 import { advanceABIMap, dappAddress } from '~/services/shared-constants';
 import { logError, logSuccess } from './logger';
 
@@ -57,9 +57,7 @@ class RequestBuilderSingleton {
 
                 const depositRes = await this.requester!.depositEther(
                     amount,
-                    transformUTF8toHex(
-                        `${amount} eth deposited to ${this.signerAddress}`
-                    )
+                    '0x'
                 );
 
                 return {
