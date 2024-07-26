@@ -20,6 +20,7 @@ export const createValidationFunction = ({
         ]);
 
 export const createGame = ({
+    title,
     home,
     away,
     token,
@@ -32,6 +33,7 @@ export const createGame = ({
     requestBuilder
         .config({ provider, signerAddress })
         .send(advanceABI.createGame.name, [
+            transformUTF8toHex(title),
             transformUTF8toHex(home),
             transformUTF8toHex(away),
             token,

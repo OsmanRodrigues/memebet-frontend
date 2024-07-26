@@ -51,7 +51,7 @@ export const GameInfosSection = (
                 shadow="sm"
             >
                 <CardHeader className="justify-between">
-                    <Heading as="h3">{`Game ${props.id}`}</Heading>
+                    <Heading as="h3">{`${props.title}`}</Heading>
                     <Heading as="h3">
                         {props.picks
                             ? `${props.picks[0]} vs ${props.picks[1]}`

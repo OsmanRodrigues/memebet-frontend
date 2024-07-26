@@ -10,6 +10,7 @@ export type GameLinkedWallet = {
     };
 };
 export type Game = {
+    title: string;
     id: number;
     picks: [string, string];
     currentOdds: [string, string][];
