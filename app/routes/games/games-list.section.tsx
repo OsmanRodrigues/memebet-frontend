@@ -40,11 +40,7 @@ export const GamesListSection = ({ isFirstOfPage }: GamesListSectionProps) => {
                         {columnKey => {
                             switch (columnKey) {
                                 case 'title':
-                                    return (
-                                        <TableCell>
-                                            {item.title}
-                                        </TableCell>
-                                    );
+                                    return <TableCell>{item.title}</TableCell>;
                                 case 'picks':
                                     return (
                                         <TableCell>
