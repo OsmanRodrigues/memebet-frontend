@@ -2,13 +2,10 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <span style="font-size:60px;">😂</span>
-    <span style="font-size:80px;">🪙</span>
-    <span style="font-size:60px;">🤑</span>
-  </a>
-
-  <h3 align="center">MemeBet - Frontend</h3>
+  <h1>
+    😂🪙🤑
+    <h3 align="center">MemeBet - Frontend</h3>
+  </h1>
 
   <p align="center">
     The MemeBet UI documentation.
